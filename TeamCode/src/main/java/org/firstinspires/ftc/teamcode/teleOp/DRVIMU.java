@@ -21,9 +21,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-import org.firstinspires.ftc.teamcode.util.BetterGamepad;
-import org.firstinspires.ftc.teamcode.util.PDFS;
-import org.firstinspires.ftc.teamcode.util.DT_Utils;
+import org.firstinspires.ftc.teamcode.util.ThankYouVV.BetterGamepad;
+import org.firstinspires.ftc.teamcode.util.ThankYouVV.PDFS;
+import org.firstinspires.ftc.teamcode.util.ThankYouVV.DT_Utils;
 import org.firstinspires.ftc.teamcode.util.BasketLauncher;
 import org.firstinspires.ftc.teamcode.util.Hardware;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;

@@ -22,7 +22,7 @@ public class Direction extends OpMode {
 
     @Override
     public void init() {
-        robot = new Hardware(hardwareMap, telemetry);
+        robot = new Hardware(hardwareMap);
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
 
         follower = Constants.createFollower(hardwareMap);
