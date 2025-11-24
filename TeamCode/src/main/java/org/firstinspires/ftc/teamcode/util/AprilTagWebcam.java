@@ -21,8 +21,7 @@ public class AprilTagWebcam {
     public List<AprilTagDetection> detectedTags = new ArrayList<>();
     public Telemetry telemetry;
 
-    public void init(HardwareMap hardwareMap, Telemetry telemetry) {
-        this.telemetry = telemetry;
+    public void init(HardwareMap hardwareMap) {
         aprilTagProcessor = new AprilTagProcessor.Builder()
                 .setDrawTagID(true)
                 .setDrawTagOutline(true)

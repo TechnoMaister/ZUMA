@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.util;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -13,14 +15,22 @@ import java.util.List;
 public class Hardware {
 
     public AprilTagWebcam aprilTagWebcam;
+    public IMU imu;
     public DcMotorEx leftFront, leftRear, rightFront, rightRear, colector, leftShoot, rightShoot;
     public Servo leftBlocker, rightBlocker;
     public List<Servo> blockers;
     public List<DcMotorEx> motors, chassis, shooters;
 
-    public Hardware(HardwareMap hardwareMap, Telemetry telemetry){
+    public Hardware(HardwareMap hardwareMap){
         aprilTagWebcam = new AprilTagWebcam();
-        aprilTagWebcam.init(hardwareMap, telemetry);
+        aprilTagWebcam.init(hardwareMap);
+
+        imu=hardwareMap.get(IMU.class,"imu");
+        IMU.Parameters parameters=new IMU.Parameters(new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                RevHubOrientationOnRobot.UsbFacingDirection.LEFT
+        ));
+        imu.initialize(parameters);
 
         leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
         leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");

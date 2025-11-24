@@ -12,7 +12,7 @@ public class RobotConstants {
     blockerOpenPos = .6,
     rumblingT = 250,
     blockT = 350,
-    vMax = 6.5,
-    k = .15,
-    tolerance = 35;
+    k = .1,
+    tolerance = 377.5,
+    backup = .85;
 }

@@ -11,8 +11,6 @@ import static org.firstinspires.ftc.teamcode.util.RobotConstants.k;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.rumblingT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.tolerance;
 
-import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.Pose;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -21,70 +19,69 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.util.BetterGamepad;
+import org.firstinspires.ftc.teamcode.util.PDFS;
+import org.firstinspires.ftc.teamcode.util.DT_Utils;
 import org.firstinspires.ftc.teamcode.util.BasketLauncher;
 import org.firstinspires.ftc.teamcode.util.Hardware;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
-@TeleOp(name = "Drive", group = "TeleOp")
-public class Drive extends OpMode {
+@TeleOp(name = "DRVIMU", group = "TeleOp")
+public class DRVIMU extends OpMode {
     public Hardware robot;
-    public Follower follower;
-    public Pose startingPose;
-    public Gamepad previousGamepad1, currentGamepad1;
     public Timer rumbling, rumbling2, block;
-    public boolean direction, team;
     public AprilTagDetection id;
-    public BasketLauncher power;
-    public double shooterPower;
+    public BasketLauncher velocity;
+    public BetterGamepad betterGamepad;
+    public boolean direction, team;
+
+    public double shooterVelocity;
+    public double heading, relative_heading, start_heading, locked_in_heading;
 
     @Override
     public void init() {
         robot = new Hardware(hardwareMap);
-
-        follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(startingPose == null ? new Pose() : startingPose);
-        follower.update();
+        betterGamepad = new BetterGamepad(gamepad1);
 
         rumbling = new Timer();
         rumbling2 = new Timer();
         block = new Timer();
 
-        previousGamepad1 = new Gamepad();
-        currentGamepad1 = new Gamepad();
-
-        power = new BasketLauncher();
-    }
-
-    @Override
-    public void start() {
-        follower.startTeleopDrive();
+        velocity = new BasketLauncher();
     }
 
     @Override
     public void loop() {
         robot.aprilTagWebcam.update();
+        betterGamepad.update();
 
         if (id != null) {
-            shooterPower = power.computeRequiredVelocity(id.ftcPose.y);
+            shooterVelocity = velocity.computeRequiredVelocity(id.ftcPose.y);
             gamepad1.rumble(Gamepad.RUMBLE_DURATION_CONTINUOUS);
             telemetry.addLine("I see!");
         }
 
-        telemetry.addData("shooterPower", shooterPower);
+        telemetry.addData("shooterPower", shooterVelocity);
         telemetry.addData("backup", backup);
-        if(id!=null)telemetry.addData("pos",id.center.x);
 
         drive(gamepad1);
 
-        previousGamepad1.copy(currentGamepad1);
-        currentGamepad1.copy(gamepad1);
+        YawPitchRollAngles orientation = robot.imu.getRobotYawPitchRollAngles();
+        heading = orientation.getYaw(AngleUnit.RADIANS);
+        relative_heading = AngleUnit.normalizeRadians(start_heading-orientation.getYaw(AngleUnit.RADIANS));
 
-        if (currentGamepad1.right_trigger > 0 && previousGamepad1.right_trigger == 0) direction = !direction;
-        if (currentGamepad1.cross && !previousGamepad1.cross) team = !team;
+        if(betterGamepad.circle.pressed) {
+            start_heading = heading;
+            locked_in_heading = 0;
+        }
 
-        if(currentGamepad1.dpad_up && !previousGamepad1.dpad_up && backup <= 1) backup += .05;
-        else if(currentGamepad1.dpad_down && !previousGamepad1.dpad_down && backup >= 0) backup -= .05;
+        if (betterGamepad.right_trigger.pressed) direction = !direction;
+        if (betterGamepad.cross.pressed) team = !team;
+
+        if(betterGamepad.dpad_up.pressed) backup += .05;
+        else if(betterGamepad.dpad_down.pressed) backup -= .05;
 
         if(team) {
             id = robot.aprilTagWebcam.getTagBySpecificID(24);
@@ -114,9 +111,8 @@ public class Drive extends OpMode {
         else if (!gamepad1.right_bumper) robot.colector.setPower(0);
 
         if (gamepad1.right_bumper && id != null) {
-            if(id.center.x >= tolerance &&
-                    id.center.x <= tolerance)
-            shoot(backup);
+            if(id.center.x >= tolerance && id.center.x <= tolerance)
+                shoot(shooterVelocity);
             else if(id.center.x < tolerance) {
                 robot.leftFront.setPower(-k);
                 robot.leftRear.setPower(-k);
@@ -136,13 +132,51 @@ public class Drive extends OpMode {
         }
     }
 
-    public void drive(Gamepad gamepad){
-        follower.setTeleOpDrive(
-                -gamepad.left_stick_y,
-                -gamepad.left_stick_x,
-                -gamepad.right_stick_x
-        );
-        follower.update();
+    public static class heading_manager {
+        public static double P=0.42,D=0.000001,F=0.03,DELTA = 0.10;
+        public static PDFS pdfs = new PDFS();
+        public static double update(double delta) {
+            pdfs.set_coeffs(P,D,0,0);
+            pdfs.set_error_delta(DELTA);
+            double output = pdfs.update(0, Math.abs(delta)) * Math.signum(delta);
+            return output + Math.signum(output)*F;
+        }
+    }
+
+    public void drive(Gamepad gamepad) {
+
+        double power_rotate = Math.sqrt(Math.pow(gamepad.right_stick_x, 2) + Math.pow(gamepad.right_stick_y, 2));
+        double angle_rotate = Math.atan2(gamepad.right_stick_x, -gamepad.right_stick_y);
+        double rx, target_angle;
+
+        double x,y,rotX,rotY;
+
+        target_angle = locked_in_heading;
+        rx = heading_manager.update(DT_Utils.calc_turn_angle(relative_heading, target_angle));
+        if (power_rotate > 0.05) {
+            locked_in_heading = relative_heading;
+            target_angle = angle_rotate;
+            rx = heading_manager.update(DT_Utils.calc_turn_angle(relative_heading, target_angle)) * power_rotate;
+        }
+        y = gamepad.right_stick_y;
+        x = gamepad.left_stick_x;
+        rotX = x * Math.cos(relative_heading) - y * Math.sin(relative_heading);
+        rotY = x * Math.sin(relative_heading) + y * Math.cos(relative_heading);
+
+
+        rotX = rotX * 1.1;
+
+        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
+        double frontLeftPower = (rotY + rotX + rx) / denominator;
+        double backLeftPower = (rotY - rotX + rx) / denominator;
+        double frontRightPower = (rotY - rotX - rx) / denominator;
+        double backRightPower = (rotY + rotX - rx) / denominator;
+
+        robot.leftFront.setPower(frontLeftPower);
+        robot.leftRear.setPower(backLeftPower);
+        robot.rightFront.setPower(frontRightPower);
+        robot.rightRear.setPower(backRightPower);
+
     }
 
     public void shoot(double power) {
