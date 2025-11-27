@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.util;
 import android.util.Size;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -70,6 +71,7 @@ public class Hardware {
         rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
 
         leftShoot.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightShoot.setDirection(DcMotorSimple.Direction.FORWARD);
 
         rightBlocker.setDirection(Servo.Direction.REVERSE);
 
@@ -80,6 +82,9 @@ public class Hardware {
 
         for (DcMotorEx motor : motors)
             motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
+        for (DcMotorEx shooter : shooters)
+            shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void update() {

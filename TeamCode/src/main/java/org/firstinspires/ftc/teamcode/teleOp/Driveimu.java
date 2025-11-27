@@ -1,13 +1,12 @@
 package org.firstinspires.ftc.teamcode.teleOp;
 
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.RPM435MAX;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.backup;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockerBlockedPos;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockerOpenPos;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.collectorSpeedB;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.collectorSpeedD;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.collectorSpeedN;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.collectorPowerB;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.collectorPowerD;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.collectorPowerN;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.k;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.rumblingT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.tolerance;
@@ -84,7 +83,7 @@ public class Driveimu extends OpMode {
         robot.update();
 
         if (id != null) {
-            shooterPeed = speed.computeRequiredVelocity(id.ftcPose.y);
+            shooterPeed = speed.speed(id.ftcPose.y);
             gamepad1.rumble(Gamepad.RUMBLE_DURATION_CONTINUOUS);
             telemetry.addLine("I see!");
         }
@@ -138,7 +137,7 @@ public class Driveimu extends OpMode {
             rumbling.resetTimer();
         }
 
-        if (gamepad1.left_bumper) robot.collector.setVelocity(collectorSpeedD*RPM435MAX);
+        if (gamepad1.left_bumper) robot.collector.setVelocity(collectorPowerD);
         else if (!gamepad1.right_bumper) robot.collector.setVelocity(0);
 
         if (gamepad1.right_bumper && id != null) {
@@ -146,17 +145,17 @@ public class Driveimu extends OpMode {
                     id.center.x <= tolerance)
             shoot(backup);
             else if(id.center.x < tolerance) {
-                robot.leftFront.setVelocity(-k*RPM435MAX);
-                robot.leftRear.setVelocity(-k*RPM435MAX);
-                robot.rightFront.setVelocity(k*RPM435MAX);
-                robot.rightRear.setVelocity(k*RPM435MAX);
+                robot.leftFront.setVelocity(-k);
+                robot.leftRear.setVelocity(-k);
+                robot.rightFront.setVelocity(k);
+                robot.rightRear.setVelocity(k);
             } else {
-                robot.leftFront.setVelocity(k*RPM435MAX);
-                robot.leftRear.setVelocity(k*RPM435MAX);
-                robot.rightFront.setVelocity(-k*RPM435MAX);
-                robot.rightRear.setVelocity(-k*RPM435MAX);
+                robot.leftFront.setVelocity(k);
+                robot.leftRear.setVelocity(k);
+                robot.rightFront.setVelocity(-k);
+                robot.rightRear.setVelocity(-k);
             }
-        } else if(gamepad1.circle) shoot(backup*RPM435MAX);
+        } else if(gamepad1.circle) shoot(backup);
         else {
             for (DcMotorEx shooterMotor : robot.shooters) shooterMotor.setVelocity(0);
             for(Servo blockerMotor : robot.blockers) blockerMotor.setPosition(blockerBlockedPos);
@@ -207,10 +206,10 @@ public class Driveimu extends OpMode {
             double frontRightPower = (rotY - rotX - rx) / denominator;
             double backRightPower = (rotY + rotX - rx) / denominator;
 
-            robot.leftFront.setVelocity(frontLeftPower*RPM435MAX);
-            robot.leftRear.setVelocity(backLeftPower*RPM435MAX);
-            robot.rightFront.setVelocity(frontRightPower*RPM435MAX);
-                robot.rightRear.setVelocity(backRightPower*RPM435MAX);
+            robot.leftFront.setVelocity(frontLeftPower);
+            robot.leftRear.setVelocity(backLeftPower);
+            robot.rightFront.setVelocity(frontRightPower);
+                robot.rightRear.setVelocity(backRightPower);
 
     }
 
@@ -229,11 +228,11 @@ public class Driveimu extends OpMode {
         for (DcMotorEx shooterMotor : robot.shooters) shooterMotor.setVelocity(speed);
         if(block.getElapsedTime() >= blockT) {
             for(Servo blockerMotor : robot.blockers) blockerMotor.setPosition(blockerOpenPos);
-            robot.collector.setVelocity(collectorSpeedN*RPM435MAX);
+            robot.collector.setVelocity(collectorPowerN);
         }
         else {
             for(Servo blockerMotor : robot.blockers) blockerMotor.setPosition(blockerBlockedPos);
-            robot.collector.setVelocity(collectorSpeedB*RPM435MAX);
+            robot.collector.setVelocity(collectorPowerB);
         }
     }
 }
