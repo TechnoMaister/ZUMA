@@ -115,23 +115,22 @@ public class Drive extends OpMode {
         else if (!gamepad1.right_bumper) robot.collector.setVelocity(0);
 
         if (gamepad1.right_bumper && id != null) {
-            if(id.center.x >= tolerance &&
-                    id.center.x <= tolerance) {
-                shoot(backup * RPM435MAX);
-                robot.leftFront.setPower(0);
-                robot.leftRear.setPower(0);
-                robot.rightFront.setPower(0);
-                robot.rightRear.setPower(0);
-            }else if(id.center.x < tolerance) {
+            if (id.center.x > tolerance) {
+                robot.leftFront.setPower(k);
+                robot.leftRear.setPower(k);
+                robot.rightFront.setPower(-k);
+                robot.rightRear.setPower(-k);
+            } else if (id.center.x < -tolerance) {
                 robot.leftFront.setPower(-k);
                 robot.leftRear.setPower(-k);
                 robot.rightFront.setPower(k);
                 robot.rightRear.setPower(k);
             } else {
-                robot.leftFront.setPower(k);
-                robot.leftRear.setPower(k);
-                robot.rightFront.setPower(-k);
-                robot.rightRear.setPower(-k);
+                shoot(backup * RPM435MAX);
+                robot.leftFront.setPower(0);
+                robot.leftRear.setPower(0);
+                robot.rightFront.setPower(0);
+                robot.rightRear.setPower(0);
             }
         } else if(gamepad1.circle) shoot(backup*RPM435MAX);
         else {
