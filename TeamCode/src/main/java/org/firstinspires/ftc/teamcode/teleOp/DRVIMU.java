@@ -58,7 +58,7 @@ public class DRVIMU extends OpMode {
         betterGamepad.update();
 
         if (id != null) {
-            shooterVelocity = velocity.speed(id.ftcPose.y);
+            shooterVelocity = velocity.power(id.ftcPose.y, hardwareMap);
             gamepad1.rumble(Gamepad.RUMBLE_DURATION_CONTINUOUS);
             telemetry.addLine("I see!");
         }

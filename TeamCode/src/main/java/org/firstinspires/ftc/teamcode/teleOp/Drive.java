@@ -8,8 +8,8 @@ import static org.firstinspires.ftc.teamcode.util.RobotConstants.collectorPowerB
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.collectorPowerD;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.collectorPowerN;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.k;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.rightTOL;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.rumblingT;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.shooterPID;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.tolerance;
 
 import com.pedropathing.follower.Follower;
@@ -37,7 +37,7 @@ public class Drive extends OpMode {
     public Timer rumbling, rumbling2, block;
     public boolean direction, team;
     public AprilTagDetection id;
-    public BasketLauncher speed;
+    public BasketLauncher launcher;
     public double shooterSpeed;
 
     @Override
@@ -54,7 +54,7 @@ public class Drive extends OpMode {
 
         betterGamepad = new BetterGamepad(gamepad1);
 
-        speed = new BasketLauncher();
+        launcher = new BasketLauncher();
     }
 
     @Override
@@ -68,7 +68,7 @@ public class Drive extends OpMode {
         betterGamepad.update();
 
         if (id != null) {
-            shooterSpeed = shooterPID.update(Math.abs(robot.leftShoot.getVelocity()), speed.speed(id.ftcPose.y-1.4));
+            shooterSpeed = launcher.power(id.ftcPose.y-1.4, hardwareMap);
             gamepad1.rumble(Gamepad.RUMBLE_DURATION_CONTINUOUS);
             telemetry.addLine("I see!");
         }
@@ -114,12 +114,14 @@ public class Drive extends OpMode {
         else if (!betterGamepad.right_bumper.held) robot.collector.setPower(0);
 
         if (betterGamepad.right_bumper.held && id != null) {
-            if (id.center.x > tolerance-10) {
+            if (id.center.x > tolerance) {
+                robot.collector.setPower(0);
                 robot.leftFront.setPower(k);
                 robot.leftRear.setPower(k);
                 robot.rightFront.setPower(-k);
                 robot.rightRear.setPower(-k);
-            } else if (id.center.x < tolerance+10) {
+            } else if (id.center.x < tolerance-rightTOL) {
+                robot.collector.setPower(0);
                 robot.leftFront.setPower(-k);
                 robot.leftRear.setPower(-k);
                 robot.rightFront.setPower(k);
@@ -129,7 +131,7 @@ public class Drive extends OpMode {
                 robot.leftRear.setPower(0);
                 robot.rightFront.setPower(0);
                 robot.rightRear.setPower(0);
-                shoot(shooterSpeed);
+                shoot(backup);
             }
         }
         else if(betterGamepad.circle.held) shoot(backup);
@@ -150,14 +152,14 @@ public class Drive extends OpMode {
     }
 
     public void shoot(double speed) {
-            for (DcMotorEx shooterMotor : robot.shooters) shooterMotor.setPower(speed);
-            if(block.getElapsedTime() >= blockT) {
-                for(Servo blockerMotor : robot.blockers) blockerMotor.setPosition(blockerOpenPos);
-                robot.collector.setPower(collectorPowerN);
-            }
-            else {
-                for(Servo blockerMotor : robot.blockers) blockerMotor.setPosition(blockerBlockedPos);
-                robot.collector.setPower(collectorPowerB);
-            }
+        for (DcMotorEx shooterMotor : robot.shooters) shooterMotor.setPower(speed);
+        if(block.getElapsedTime() >= blockT) {
+            for(Servo blockerMotor : robot.blockers) blockerMotor.setPosition(blockerOpenPos);
+            robot.collector.setPower(collectorPowerN);
+        }
+        else {
+            for(Servo blockerMotor : robot.blockers) blockerMotor.setPosition(blockerBlockedPos);
+            robot.collector.setPower(collectorPowerB);
+        }
     }
 }

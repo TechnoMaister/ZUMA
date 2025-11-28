@@ -83,7 +83,7 @@ public class Driveimu extends OpMode {
         robot.update();
 
         if (id != null) {
-            shooterPeed = speed.speed(id.ftcPose.y);
+            shooterPeed = speed.power(id.ftcPose.y, hardwareMap);
             gamepad1.rumble(Gamepad.RUMBLE_DURATION_CONTINUOUS);
             telemetry.addLine("I see!");
         }
