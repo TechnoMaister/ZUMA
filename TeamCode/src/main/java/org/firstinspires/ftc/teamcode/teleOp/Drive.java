@@ -131,7 +131,7 @@ public class Drive extends OpMode {
                 robot.leftRear.setPower(0);
                 robot.rightFront.setPower(0);
                 robot.rightRear.setPower(0);
-                shoot(backup);
+                //shoot(backup);
             }
         }
         else if(betterGamepad.circle.held) shoot(backup);
@@ -161,5 +161,7 @@ public class Drive extends OpMode {
             for(Servo blockerMotor : robot.blockers) blockerMotor.setPosition(blockerBlockedPos);
             robot.collector.setPower(collectorPowerB);
         }
+
+
     }
 }

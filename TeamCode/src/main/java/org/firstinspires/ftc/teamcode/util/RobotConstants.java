@@ -11,7 +11,7 @@ public class RobotConstants {
     blockerBlockedPos = .45,
     blockerOpenPos = .6,
     rumblingT = 250,
-    blockT = 350,
+    blockT = 500,
     k = .1,
     tolerance = 250,
     backup = 1,
