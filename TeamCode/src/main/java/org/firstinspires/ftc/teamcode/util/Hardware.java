@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.util;
 
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.COLLECTOR_PIDF;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.SHOOTER_PIDF;
+
 import android.util.Size;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -27,7 +29,7 @@ public class Hardware {
     public DcMotorEx leftFront, leftRear, rightFront, rightRear, collector, leftShoot, rightShoot;
     public Servo leftBlocker, rightBlocker;
     public List<Servo> blockers;
-    public List<DcMotorEx> motors, chassis, shooters;
+    public List<DcMotorEx> chassis, shooters, motors;
     public AprilTagProcessor aprilTagProcessor;
     public VisionPortal visionPortal;
     public List<AprilTagDetection> detectedTags = new ArrayList<>();
@@ -67,20 +69,25 @@ public class Hardware {
         leftBlocker = hardwareMap.get(Servo.class, "leftBlocker");
         rightBlocker = hardwareMap.get(Servo.class, "rightBlocker");
 
-        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFront.setDirection(DcMotorEx.Direction.REVERSE);
+        rightRear.setDirection(DcMotorEx.Direction.REVERSE);
 
-        leftShoot.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftShoot.setDirection(DcMotorEx.Direction.REVERSE);
 
         rightBlocker.setDirection(Servo.Direction.REVERSE);
 
-        motors = Arrays.asList(leftFront, leftRear, rightFront, rightRear, collector, leftShoot, rightShoot);
+        motors = Arrays.asList(leftFront, leftRear, rightFront, rightRear, leftShoot, rightShoot, collector);
         chassis = Arrays.asList(leftFront, leftRear, rightFront, rightRear);
         shooters = Arrays.asList(leftShoot, rightShoot);
         blockers = Arrays.asList(leftBlocker, rightBlocker);
 
         for (DcMotorEx motor : motors)
             motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
+
+        for (DcMotorEx shooter : shooters)
+            shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, SHOOTER_PIDF);
+
+        collector.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, COLLECTOR_PIDF);
     }
 
     public void update() {

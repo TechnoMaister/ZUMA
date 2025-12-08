@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.util.ThankYouVV;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -8,6 +9,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.util.Hardware;
 
+@Disabled
 @TeleOp(name = "MyIMU", group = "IMU")
 public class MyIMU extends OpMode {
 

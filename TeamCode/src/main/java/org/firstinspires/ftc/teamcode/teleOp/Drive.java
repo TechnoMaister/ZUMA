@@ -4,22 +4,28 @@ import static org.firstinspires.ftc.teamcode.util.RobotConstants.backup;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockerBlockedPos;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockerOpenPos;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.collectorPowerB;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.collectorPowerD;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.collectorPowerN;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.collectorPulseT;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.collector_multiplierB;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.collector_multiplierD;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.collector_multiplierN;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.dMax;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.dMid;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.errorMax;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.errorMid;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.errorMin;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.k;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.rightTOL;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.rumblingT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.tolerance;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.vMax;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -35,10 +41,10 @@ public class Drive extends OpMode {
     public Pose startingPose;
     public BetterGamepad betterGamepad;
     public Timer rumbling, rumbling2, block;
-    public boolean direction, team;
     public AprilTagDetection id;
     public BasketLauncher launcher;
-    public double shooterSpeed;
+    public double shooterVelocity, error, distance;
+    public boolean direction, team;
 
     @Override
     public void init() {
@@ -68,23 +74,24 @@ public class Drive extends OpMode {
         betterGamepad.update();
 
         if (id != null) {
-            shooterSpeed = launcher.power(id.ftcPose.y-1.4, hardwareMap);
-            gamepad1.rumble(Gamepad.RUMBLE_DURATION_CONTINUOUS);
+            distance = id.ftcPose.y-.14;
+            if(distance < dMid) error = errorMin;
+            else if(distance >= dMid && distance < dMax) error = errorMid;
+            else error = errorMax;
+            shooterVelocity = Math.min(1, launcher.multiplier(distance)+error);
             telemetry.addLine("I see!");
+            telemetry.addData("distance", distance);
         }
 
-        telemetry.addData("shooterPower", shooterSpeed);
-        telemetry.addData("shooterVel", robot.leftShoot.getVelocity());
-        telemetry.addData("backup", backup);
-        if(id!=null)telemetry.addData("pos",id.center.x);
-
+        telemetry.addData("velocity", shooterVelocity*vMax);
         drive(gamepad1);
 
         if (betterGamepad.right_trigger.pressed) direction = !direction;
         if (betterGamepad.cross.pressed) team = !team;
 
-        if(betterGamepad.dpad_up.pressed && backup < 1) backup += .05;
-        else if(betterGamepad.dpad_down.pressed && backup > 0) backup -= .05;
+        if (betterGamepad.dpad_up.pressed && backup < 1.0) backup += 0.05;
+        else if (betterGamepad.dpad_down.pressed && backup > 0.0) backup -= 0.05;
+        telemetry.addData("backup", backup*vMax);
 
         if(team) {
             id = robot.getTagBySpecificID(24);
@@ -95,14 +102,14 @@ public class Drive extends OpMode {
         }
 
         if (direction) {
-            robot.collector.setDirection(DcMotorSimple.Direction.REVERSE);
+            robot.collector.setDirection(DcMotorEx.Direction.REVERSE);
             gamepad1.setLedColor(1, 0, 0, Gamepad.LED_DURATION_CONTINUOUS);
             if (rumbling.getElapsedTime() <= rumblingT)
                 gamepad1.rumble(Gamepad.RUMBLE_DURATION_CONTINUOUS);
             else gamepad1.stopRumble();
             rumbling2.resetTimer();
         } else {
-            robot.collector.setDirection(DcMotorSimple.Direction.FORWARD);
+            robot.collector.setDirection(DcMotorEx.Direction.FORWARD);
             gamepad1.setLedColor(0, 1, 0, Gamepad.LED_DURATION_CONTINUOUS);
             if (rumbling2.getElapsedTime() <= rumblingT)
                 gamepad1.rumble(Gamepad.RUMBLE_DURATION_CONTINUOUS);
@@ -110,34 +117,31 @@ public class Drive extends OpMode {
             rumbling.resetTimer();
         }
 
-        if (betterGamepad.left_bumper.held) robot.collector.setPower(collectorPowerD);
-        else if (!betterGamepad.right_bumper.held) robot.collector.setPower(0);
-
         if (betterGamepad.right_bumper.held && id != null) {
-            if (id.center.x > tolerance) {
-                robot.collector.setPower(0);
+            if (id.center.x > tolerance) { // Turn Right
                 robot.leftFront.setPower(k);
                 robot.leftRear.setPower(k);
                 robot.rightFront.setPower(-k);
                 robot.rightRear.setPower(-k);
-            } else if (id.center.x < tolerance-rightTOL) {
-                robot.collector.setPower(0);
+            } else if (id.center.x < tolerance - rightTOL) { // Turn Left
                 robot.leftFront.setPower(-k);
                 robot.leftRear.setPower(-k);
                 robot.rightFront.setPower(k);
                 robot.rightRear.setPower(k);
-            } else {
+            } else { // Centered
                 robot.leftFront.setPower(0);
                 robot.leftRear.setPower(0);
                 robot.rightFront.setPower(0);
                 robot.rightRear.setPower(0);
-                //shoot(backup);
+                gamepad1.rumble(Gamepad.RUMBLE_DURATION_CONTINUOUS);
             }
-        }
-        else if(betterGamepad.circle.held) shoot(backup);
+        } else if (betterGamepad.circle.held) shoot(shooterVelocity);
+        else if(betterGamepad.square.held) shoot(backup);
         else {
-            for (DcMotorEx shooterMotor : robot.shooters) shooterMotor.setPower(0);
-            for(Servo blockerMotor : robot.blockers) blockerMotor.setPosition(blockerBlockedPos);
+            for(DcMotorEx shooter : robot.shooters) shooter.setVelocity(0);
+            for (Servo blockerMotor : robot.blockers) blockerMotor.setPosition(blockerBlockedPos);
+            if (betterGamepad.left_bumper.held) robot.collector.setVelocity(collector_multiplierD*vMax);
+            else robot.collector.setVelocity(0);
             block.resetTimer();
         }
     }
@@ -146,22 +150,22 @@ public class Drive extends OpMode {
         follower.setTeleOpDrive(
                 -gamepad.left_stick_y,
                 -gamepad.left_stick_x,
-                -gamepad.right_stick_x
+                -gamepad.right_stick_x,
+                false
         );
         follower.update();
     }
 
-    public void shoot(double speed) {
-        for (DcMotorEx shooterMotor : robot.shooters) shooterMotor.setPower(speed);
+    public void shoot(double velocity) {
+        for(DcMotorEx shooter : robot.shooters) shooter.setVelocity(velocity*vMax);
+
         if(block.getElapsedTime() >= blockT) {
             for(Servo blockerMotor : robot.blockers) blockerMotor.setPosition(blockerOpenPos);
-            robot.collector.setPower(collectorPowerN);
-        }
-        else {
+            if(block.getElapsedTime() < blockT + collectorPulseT) robot.collector.setVelocity(collector_multiplierB * vMax);
+            else robot.collector.setVelocity(collector_multiplierN * vMax);
+        } else {
             for(Servo blockerMotor : robot.blockers) blockerMotor.setPosition(blockerBlockedPos);
-            robot.collector.setPower(collectorPowerB);
+            robot.collector.setVelocity(0);
         }
-
-
     }
 }

@@ -1,20 +1,22 @@
-package org.firstinspires.ftc.teamcode.teleOp;
+package org.firstinspires.ftc.teamcode.util.ThankYouVV;
 
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.backup;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockerBlockedPos;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockerOpenPos;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.collectorPowerB;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.collectorPowerD;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.collectorPowerN;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.collector_multiplierB;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.collector_multiplierD;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.collector_multiplierN;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.k;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.rumblingT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.tolerance;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.vMax;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.util.Timer;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -26,12 +28,11 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.util.ThankYouVV.PDFS;
-import org.firstinspires.ftc.teamcode.util.ThankYouVV.DT_Utils;
 import org.firstinspires.ftc.teamcode.util.BasketLauncher;
 import org.firstinspires.ftc.teamcode.util.Hardware;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
+@Disabled
 @TeleOp(name = "Driveimu", group = "TeleOp")
 public class Driveimu extends OpMode {
     public Hardware robot;
@@ -83,7 +84,7 @@ public class Driveimu extends OpMode {
         robot.update();
 
         if (id != null) {
-            shooterPeed = speed.power(id.ftcPose.y, hardwareMap);
+            shooterPeed = speed.multiplier(id.ftcPose.y);
             gamepad1.rumble(Gamepad.RUMBLE_DURATION_CONTINUOUS);
             telemetry.addLine("I see!");
         }
@@ -137,7 +138,7 @@ public class Driveimu extends OpMode {
             rumbling.resetTimer();
         }
 
-        if (gamepad1.left_bumper) robot.collector.setVelocity(collectorPowerD);
+        if (gamepad1.left_bumper) robot.collector.setVelocity(collector_multiplierD);
         else if (!gamepad1.right_bumper) robot.collector.setVelocity(0);
 
         if (gamepad1.right_bumper && id != null) {
@@ -177,10 +178,9 @@ public class Driveimu extends OpMode {
 
 
 
-    public void handle_wheels() {
-
-        double power_rotate = Math.sqrt(Math.pow(gamepad1.right_stick_x, 2) + Math.pow(gamepad1.right_stick_y, 2));
-        double angle_rotate = Math.atan2(gamepad1.right_stick_x, -gamepad1.right_stick_y);
+    public void drive(Gamepad gamepad) {
+        double power_rotate = Math.sqrt(Math.pow(gamepad.right_stick_x, 2) + Math.pow(gamepad.right_stick_y, 2));
+        double angle_rotate = Math.atan2(gamepad.right_stick_x, -gamepad.right_stick_y);
         double rx, target_angle;
 
         double x,y,rotX,rotY;
@@ -192,25 +192,24 @@ public class Driveimu extends OpMode {
             target_angle = angle_rotate;
             rx = heading_manager.update(DT_Utils.calc_turn_angle(relative_heading, target_angle)) * power_rotate;
         }
-        y = gamepad1.right_stick_y;
-        x = gamepad1.left_stick_x;
-            rotX = x * Math.cos(relative_heading) - y * Math.sin(relative_heading);
-            rotY = x * Math.sin(relative_heading) + y * Math.cos(relative_heading);
+        y = gamepad.right_stick_y;
+        x = gamepad.left_stick_x;
+        rotX = x * Math.cos(relative_heading) - y * Math.sin(relative_heading);
+        rotY = x * Math.sin(relative_heading) + y * Math.cos(relative_heading);
 
 
-            rotX = rotX * 1.1;
+        rotX = rotX * 1.1;
 
-            double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
-            double frontLeftPower = (rotY + rotX + rx) / denominator;
-            double backLeftPower = (rotY - rotX + rx) / denominator;
-            double frontRightPower = (rotY - rotX - rx) / denominator;
-            double backRightPower = (rotY + rotX - rx) / denominator;
+        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
+        double frontLeftPower = (rotY + rotX + rx) / denominator;
+        double backLeftPower = (rotY - rotX + rx) / denominator;
+        double frontRightPower = (rotY - rotX - rx) / denominator;
+        double backRightPower = (rotY + rotX - rx) / denominator;
 
-            robot.leftFront.setVelocity(frontLeftPower);
-            robot.leftRear.setVelocity(backLeftPower);
-            robot.rightFront.setVelocity(frontRightPower);
-                robot.rightRear.setVelocity(backRightPower);
-
+        robot.leftFront.setVelocity(frontLeftPower*vMax);
+        robot.leftRear.setVelocity(backLeftPower*vMax);
+        robot.rightFront.setVelocity(frontRightPower*vMax);
+        robot.rightRear.setVelocity(backRightPower*vMax);
     }
 
     /*public void drive(Gamepad gamepad){
@@ -220,19 +219,17 @@ public class Driveimu extends OpMode {
                 -gamepad.right_stick_x
         );
         follower.update();
-    }
-
-     */
+    }*/
 
     public void shoot(double speed) {
         for (DcMotorEx shooterMotor : robot.shooters) shooterMotor.setVelocity(speed);
         if(block.getElapsedTime() >= blockT) {
             for(Servo blockerMotor : robot.blockers) blockerMotor.setPosition(blockerOpenPos);
-            robot.collector.setVelocity(collectorPowerN);
+            robot.collector.setVelocity(collector_multiplierN);
         }
         else {
             for(Servo blockerMotor : robot.blockers) blockerMotor.setPosition(blockerBlockedPos);
-            robot.collector.setVelocity(collectorPowerB);
+            robot.collector.setVelocity(collector_multiplierB);
         }
     }
 }
