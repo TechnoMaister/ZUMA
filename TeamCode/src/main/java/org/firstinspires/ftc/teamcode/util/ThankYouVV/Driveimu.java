@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.util.ThankYouVV;
+/*package org.firstinspires.ftc.teamcode.util.ThankYouVV;
 
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.backup;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockT;
@@ -7,7 +7,7 @@ import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockerOpenPos;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.collector_multiplierB;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.collector_multiplierD;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.collector_multiplierN;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.k;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.rad;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.rumblingT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.tolerance;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.vMax;
@@ -146,15 +146,15 @@ public class Driveimu extends OpMode {
                     id.center.x <= tolerance)
             shoot(backup);
             else if(id.center.x < tolerance) {
-                robot.leftFront.setVelocity(-k);
-                robot.leftRear.setVelocity(-k);
-                robot.rightFront.setVelocity(k);
-                robot.rightRear.setVelocity(k);
+                robot.leftFront.setVelocity(-rad);
+                robot.leftRear.setVelocity(-rad);
+                robot.rightFront.setVelocity(rad);
+                robot.rightRear.setVelocity(rad);
             } else {
-                robot.leftFront.setVelocity(k);
-                robot.leftRear.setVelocity(k);
-                robot.rightFront.setVelocity(-k);
-                robot.rightRear.setVelocity(-k);
+                robot.leftFront.setVelocity(rad);
+                robot.leftRear.setVelocity(rad);
+                robot.rightFront.setVelocity(-rad);
+                robot.rightRear.setVelocity(-rad);
             }
         } else if(gamepad1.circle) shoot(backup);
         else {
@@ -219,7 +219,7 @@ public class Driveimu extends OpMode {
                 -gamepad.right_stick_x
         );
         follower.update();
-    }*/
+    }
 
     public void shoot(double speed) {
         for (DcMotorEx shooterMotor : robot.shooters) shooterMotor.setVelocity(speed);
@@ -232,4 +232,4 @@ public class Driveimu extends OpMode {
             robot.collector.setVelocity(collector_multiplierB);
         }
     }
-}
+}*/

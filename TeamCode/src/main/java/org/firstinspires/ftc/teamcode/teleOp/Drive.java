@@ -13,8 +13,8 @@ import static org.firstinspires.ftc.teamcode.util.RobotConstants.dMid;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.errorMax;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.errorMid;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.errorMin;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.k;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.rightTOL;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.pow;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.offset;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.rumblingT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.tolerance;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.vMax;
@@ -73,6 +73,8 @@ public class Drive extends OpMode {
         robot.update();
         betterGamepad.update();
 
+        drive(gamepad1);
+
         if (id != null) {
             distance = id.ftcPose.y-.14;
             if(distance < dMid) error = errorMin;
@@ -84,7 +86,6 @@ public class Drive extends OpMode {
         }
 
         telemetry.addData("velocity", shooterVelocity*vMax);
-        drive(gamepad1);
 
         if (betterGamepad.right_trigger.pressed) direction = !direction;
         if (betterGamepad.cross.pressed) team = !team;
@@ -118,21 +119,24 @@ public class Drive extends OpMode {
         }
 
         if (betterGamepad.right_bumper.held && id != null) {
-            if (id.center.x > tolerance) { // Turn Right
-                robot.leftFront.setPower(k);
-                robot.leftRear.setPower(k);
-                robot.rightFront.setPower(-k);
-                robot.rightRear.setPower(-k);
-            } else if (id.center.x < tolerance - rightTOL) { // Turn Left
-                robot.leftFront.setPower(-k);
-                robot.leftRear.setPower(-k);
-                robot.rightFront.setPower(k);
-                robot.rightRear.setPower(k);
-            } else { // Centered
+            if (id.center.x > tolerance) {
+                robot.leftFront.setPower(pow);
+                robot.leftRear.setPower(pow);
+                robot.rightFront.setPower(-pow);
+                robot.rightRear.setPower(-pow);
+            }
+            else if (id.center.x < tolerance - offset) {
+                robot.leftFront.setPower(-pow);
+                robot.leftRear.setPower(-pow);
+                robot.rightFront.setPower(pow);
+                robot.rightRear.setPower(pow);
+            }
+            else {
                 robot.leftFront.setPower(0);
                 robot.leftRear.setPower(0);
                 robot.rightFront.setPower(0);
                 robot.rightRear.setPower(0);
+                shoot(shooterVelocity);
                 gamepad1.rumble(Gamepad.RUMBLE_DURATION_CONTINUOUS);
             }
         } else if (betterGamepad.circle.held) shoot(shooterVelocity);

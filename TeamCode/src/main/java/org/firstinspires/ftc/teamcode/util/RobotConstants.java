@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 @Configurable
 public class RobotConstants {
     public static double
+
     collector_multiplierN = 1,
     collector_multiplierD = 1,
     collector_multiplierB = -.5,
@@ -14,22 +15,26 @@ public class RobotConstants {
     rumblingT = 250,
     blockT = 500,
     collectorPulseT = 200,
-    k = .1,
+    pow = .1,
     tolerance = 250,
     backup = 1,
-    rightTOL = 15,
+    offset = 15,
     vMax = 2800,
     errorMin = .6,
     errorMid = .7,
     errorMax = .8,
     dMid = 1.5,
     dMax = 3;
-    public static PIDFCoefficients SHOOTER_PIDF = new PIDFCoefficients(
+
+    public static
+
+    PIDFCoefficients SHOOTER_PIDF = new PIDFCoefficients(
             20,
             0,
             10,
             12
     ),
+
     COLLECTOR_PIDF = new PIDFCoefficients(
             20,
             0,

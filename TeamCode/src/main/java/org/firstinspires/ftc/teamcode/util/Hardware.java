@@ -5,11 +5,9 @@ import static org.firstinspires.ftc.teamcode.util.RobotConstants.SHOOTER_PIDF;
 
 import android.util.Size;
 
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -25,11 +23,10 @@ import java.util.List;
 
 public class Hardware {
 
-    public IMU imu;
     public DcMotorEx leftFront, leftRear, rightFront, rightRear, collector, leftShoot, rightShoot;
     public Servo leftBlocker, rightBlocker;
     public List<Servo> blockers;
-    public List<DcMotorEx> chassis, shooters, motors;
+    public List<DcMotorEx> shooters;
     public AprilTagProcessor aprilTagProcessor;
     public VisionPortal visionPortal;
     public List<AprilTagDetection> detectedTags = new ArrayList<>();
@@ -50,43 +47,35 @@ public class Hardware {
 
         visionPortal = builder.build();
 
-        imu=hardwareMap.get(IMU.class,"imu");
-        IMU.Parameters parameters=new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.LEFT
-        ));
-        imu.initialize(parameters);
-
         leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
         leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
-        rightRear = hardwareMap.get(DcMotorEx.class, "rightFront");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightRear");
+        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+        rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
 
         collector = hardwareMap.get(DcMotorEx.class, "collector");
+
         leftShoot = hardwareMap.get(DcMotorEx.class, "leftShoot");
         rightShoot = hardwareMap.get(DcMotorEx.class, "rightShoot");
 
         leftBlocker = hardwareMap.get(Servo.class, "leftBlocker");
         rightBlocker = hardwareMap.get(Servo.class, "rightBlocker");
 
-        rightFront.setDirection(DcMotorEx.Direction.REVERSE);
-        rightRear.setDirection(DcMotorEx.Direction.REVERSE);
+        leftFront.setDirection(DcMotorEx.Direction.REVERSE);
+        leftRear.setDirection(DcMotorEx.Direction.REVERSE);
 
         leftShoot.setDirection(DcMotorEx.Direction.REVERSE);
 
         rightBlocker.setDirection(Servo.Direction.REVERSE);
 
-        motors = Arrays.asList(leftFront, leftRear, rightFront, rightRear, leftShoot, rightShoot, collector);
-        chassis = Arrays.asList(leftFront, leftRear, rightFront, rightRear);
         shooters = Arrays.asList(leftShoot, rightShoot);
         blockers = Arrays.asList(leftBlocker, rightBlocker);
 
-        for (DcMotorEx motor : motors)
-            motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-
-        for (DcMotorEx shooter : shooters)
+        for (DcMotorEx shooter : shooters) {
+            shooter.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
             shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, SHOOTER_PIDF);
+        }
 
+        collector.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         collector.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, COLLECTOR_PIDF);
     }
 
