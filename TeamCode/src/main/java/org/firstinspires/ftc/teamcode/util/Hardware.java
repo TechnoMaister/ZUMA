@@ -6,16 +6,15 @@ import static org.firstinspires.ftc.teamcode.util.RobotConstants.SHOOTER_PIDF;
 import android.util.Size;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,7 +25,7 @@ public class Hardware {
     public DcMotorEx leftFront, leftRear, rightFront, rightRear, collector, leftShoot, rightShoot;
     public Servo leftBlocker, rightBlocker;
     public List<Servo> blockers;
-    public List<DcMotorEx> shooters;
+    public List<DcMotorEx> motors, shooters, chassis, leftChassis, rightChassis;
     public AprilTagProcessor aprilTagProcessor;
     public VisionPortal visionPortal;
     public List<AprilTagDetection> detectedTags = new ArrayList<>();
@@ -67,16 +66,20 @@ public class Hardware {
 
         rightBlocker.setDirection(Servo.Direction.REVERSE);
 
+        motors = Arrays.asList(leftFront, leftRear, rightFront, rightRear, leftShoot, rightShoot, collector);
+        chassis = Arrays.asList(leftFront, leftRear, rightFront, rightRear);
+        leftChassis = Arrays.asList(leftFront, leftRear);
+        rightChassis = Arrays.asList(rightFront, rightRear);
         shooters = Arrays.asList(leftShoot, rightShoot);
         blockers = Arrays.asList(leftBlocker, rightBlocker);
 
-        for (DcMotorEx shooter : shooters) {
-            shooter.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-            shooter.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, SHOOTER_PIDF);
-        }
+        for (DcMotorEx motor : motors)
+            motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
-        collector.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        collector.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, COLLECTOR_PIDF);
+        for (DcMotorEx shooter : shooters)
+            shooter.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, SHOOTER_PIDF);
+
+        collector.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, COLLECTOR_PIDF);
     }
 
     public void update() {
@@ -87,5 +90,19 @@ public class Hardware {
         for(AprilTagDetection detection : detectedTags)
             if(detection.id == id) return detection;
         return null;
+    }
+
+    public void turn(double power, boolean isLeft) {
+        if(isLeft) {
+            for (DcMotorEx leftChassis : leftChassis)
+                leftChassis.setPower(-power);
+            for (DcMotorEx rightChassis : rightChassis)
+                rightChassis.setPower(power);
+        } else {
+            for (DcMotorEx leftChassis : leftChassis)
+                leftChassis.setPower(power);
+            for (DcMotorEx rightChassis : rightChassis)
+                rightChassis.setPower(-power);
+        }
     }
 }

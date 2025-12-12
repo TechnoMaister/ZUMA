@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.util;
 
-import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.bylazar.configurables.annotations.Configurable;
 
 @Configurable
 public class RobotConstants {
@@ -14,17 +14,22 @@ public class RobotConstants {
     blockerOpenPos = .6,
     rumblingT = 250,
     blockT = 500,
-    collectorPulseT = 200,
+    collectorPulseT = 100,
     pow = .1,
     tolerance = 250,
     backup = 1,
     offset = 15,
     vMax = 2800,
     errorMin = .6,
-    errorMid = .7,
-    errorMax = .8,
-    dMid = 1.5,
-    dMax = 3;
+    errorMid = .63,
+    errorMax = .65,
+    dMid = 1,
+    dMax = 2,
+    scoreT = 2000,
+    collectT = 1000,
+    shootT = 750,
+    open = 250,
+    scoreMult1 = .7;
 
     public static
 

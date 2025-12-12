@@ -119,24 +119,10 @@ public class Drive extends OpMode {
         }
 
         if (betterGamepad.right_bumper.held && id != null) {
-            if (id.center.x > tolerance) {
-                robot.leftFront.setPower(pow);
-                robot.leftRear.setPower(pow);
-                robot.rightFront.setPower(-pow);
-                robot.rightRear.setPower(-pow);
-            }
-            else if (id.center.x < tolerance - offset) {
-                robot.leftFront.setPower(-pow);
-                robot.leftRear.setPower(-pow);
-                robot.rightFront.setPower(pow);
-                robot.rightRear.setPower(pow);
-            }
+            if (id.center.x > tolerance) robot.turn(pow, false);
+            else if (id.center.x < tolerance - offset) robot.turn(pow, true);
             else {
-                robot.leftFront.setPower(0);
-                robot.leftRear.setPower(0);
-                robot.rightFront.setPower(0);
-                robot.rightRear.setPower(0);
-                shoot(shooterVelocity);
+                for (DcMotorEx chassis : robot.chassis) chassis.setPower(0);
                 gamepad1.rumble(Gamepad.RUMBLE_DURATION_CONTINUOUS);
             }
         } else if (betterGamepad.circle.held) shoot(shooterVelocity);
@@ -148,6 +134,9 @@ public class Drive extends OpMode {
             else robot.collector.setVelocity(0);
             block.resetTimer();
         }
+
+        if(betterGamepad.dpad_left.held) robot.turn(pow, true);
+        else if(betterGamepad.dpad_right.held) robot.turn(pow, false);
     }
 
     public void drive(Gamepad gamepad){
