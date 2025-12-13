@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.util;
 
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.bylazar.configurables.annotations.Configurable;
 
@@ -46,4 +47,15 @@ public class RobotConstants {
             10,
             12
     );
+
+    public static Pose
+
+    startPose = new Pose(23.5, 126.5, Math.toRadians(142.5)),
+    scorePose = new Pose(60, 95, Math.toRadians(142.5)),
+    scorePose1stPickup = new Pose(60, 85, Math.toRadians(142.5)),
+    scorePose2 = new Pose(65, 25, Math.toRadians(120)),
+    pickup1interPose = new Pose(60, 83, Math.toRadians(0)),
+    pickup1Pose = new Pose(23, 83, Math.toRadians(0)),
+    pickup2Pose = new Pose(37, 60, Math.toRadians(0)),
+    pickup3Pose = new Pose(37, 35, Math.toRadians(0));
 }

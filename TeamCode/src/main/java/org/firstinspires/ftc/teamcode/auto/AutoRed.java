@@ -24,8 +24,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.util.Hardware;
 import org.firstinspires.ftc.teamcode.util.RobotConstants;
 
-@Autonomous(name = "Blue", group = "Auto")
-public class AutoBlue extends OpMode {
+@Autonomous(name = "Red", group = "Auto")
+public class AutoRed extends OpMode {
 
     public Follower follower;
     public Timer pathTimer, actionTimer, opmodeTimer;
@@ -37,14 +37,14 @@ public class AutoBlue extends OpMode {
 
     @Override
     public void init() {
-        startPose = RobotConstants.startPose;
-        scorePose = RobotConstants.scorePose;
-        scorePose1stPickup = RobotConstants.scorePose1stPickup;
-        scorePose2 = RobotConstants.scorePose2;
-        pickup1interPose = RobotConstants.pickup1interPose;
-        pickup1Pose = RobotConstants.pickup1Pose;
-        pickup2Pose = RobotConstants.pickup2Pose;
-        pickup3Pose = RobotConstants.pickup3Pose;
+        startPose = RobotConstants.startPose.mirror();
+        scorePose = RobotConstants.scorePose.mirror();
+        scorePose1stPickup = RobotConstants.scorePose1stPickup.mirror();
+        scorePose2 = RobotConstants.scorePose2.mirror();
+        pickup1interPose = RobotConstants.pickup1interPose.mirror();
+        pickup1Pose = RobotConstants.pickup1Pose.mirror();
+        pickup2Pose = RobotConstants.pickup2Pose.mirror();
+        pickup3Pose = RobotConstants.pickup3Pose.mirror();
 
         pathTimer = new Timer();
         actionTimer = new Timer();
