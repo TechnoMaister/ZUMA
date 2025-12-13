@@ -9,7 +9,6 @@ import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.vMax;
 
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.Path;
@@ -29,7 +28,7 @@ public class AutoRedST extends OpMode {
 
     public Follower follower;
     public Timer pathTimer, actionTimer, opmodeTimer;
-    public Pose startPoseST, scorePoseST, parkPose, parkPoseControlPoint;
+    public Pose startPoseST, scorePoseST, parkPose;
     public Path scorePreload;
     public PathChain park;
     public Hardware robot;
@@ -40,7 +39,6 @@ public class AutoRedST extends OpMode {
         startPoseST = RobotConstants.startPoseST.mirror();
         scorePoseST = RobotConstants.scorePoseST.mirror();
         parkPose = RobotConstants.parkPose.mirror();
-        parkPoseControlPoint = RobotConstants.parkPoseControlPoint.mirror();
 
         pathTimer = new Timer();
         actionTimer = new Timer();
@@ -58,7 +56,7 @@ public class AutoRedST extends OpMode {
         scorePreload.setLinearHeadingInterpolation(startPoseST.getHeading(), scorePoseST.getHeading());
 
         park = follower.pathBuilder()
-                .addPath(new BezierCurve(scorePoseST, parkPoseControlPoint, parkPose))
+                .addPath(new BezierLine(scorePoseST, parkPose))
                 .setLinearHeadingInterpolation(scorePoseST.getHeading(), parkPose.getHeading())
                 .build();
     }

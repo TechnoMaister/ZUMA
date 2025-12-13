@@ -60,6 +60,5 @@ public class RobotConstants {
     pickup3Pose = new Pose(37, 35, Math.toRadians(0)),
     startPoseST = new Pose(60, 8, Math.toRadians(90)),
     scorePoseST = new Pose(60, 12.5, Math.toRadians(110)),
-    parkPose = new Pose(105, 33.5, Math.toRadians(180)),
-    parkPoseControlPoint = new Pose(54, 68.5);
+    parkPose = new Pose(56, 50, Math.toRadians(180));
 }
