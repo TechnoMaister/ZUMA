@@ -29,9 +29,9 @@ public class AutoRed extends OpMode {
 
     public Follower follower;
     public Timer pathTimer, actionTimer, opmodeTimer;
-    public Pose startPose, scorePose, scorePose2, pickup1Pose, pickup1interPose, pickup2Pose, pickup3Pose, scorePose1stPickup;
+    public Pose startPose, scorePose, scorePose2, pickup1Pose, pickup1interPose, pickup2Pose, pickup3Pose, scorePose1stPickup, parkPose;
     public Path scorePreload;
-    public PathChain interGrabPickup1, grabPickup1, scorePickup1, grabPickup2, scorePickup2, grabPickup3, scorePickup3;
+    public PathChain interGrabPickup1, grabPickup1, scorePickup1, grabPickup2, scorePickup2, grabPickup3, scorePickup3, park;
     public Hardware robot;
     public int pathState;
 
@@ -45,6 +45,7 @@ public class AutoRed extends OpMode {
         pickup1Pose = RobotConstants.pickup1Pose.mirror();
         pickup2Pose = RobotConstants.pickup2Pose.mirror();
         pickup3Pose = RobotConstants.pickup3Pose.mirror();
+        parkPose = RobotConstants.parkPose.mirror();
 
         pathTimer = new Timer();
         actionTimer = new Timer();
@@ -95,6 +96,11 @@ public class AutoRed extends OpMode {
                 .addPath(new BezierLine(pickup3Pose, scorePose2))
                 .setLinearHeadingInterpolation(pickup3Pose.getHeading(), scorePose2.getHeading())
                 .build();
+
+        park = follower.pathBuilder()
+                .addPath(new BezierLine(scorePose, parkPose))
+                .setLinearHeadingInterpolation(scorePose.getHeading(), parkPose.getHeading())
+                .build();
     }
 
     public void autonomousPathUpdate() {
@@ -128,8 +134,8 @@ public class AutoRed extends OpMode {
                 if(!follower.isBusy()) {
                     if(actionTimer.getElapsedTime() < scoreT) score();
                     else {
-                        stopShoot();
-                        block();
+                        stopEverything();
+                        follower.followPath(park,true);
                         setPathState(-1);
                     }
                     //follower.followPath(grabPickup2,true);
@@ -160,9 +166,6 @@ public class AutoRed extends OpMode {
                 if(!follower.isBusy()) {
                     setPathState(-1);
                 }
-                break;
-            default:
-                end();
                 break;
         }
     }
@@ -223,8 +226,7 @@ public class AutoRed extends OpMode {
         }
     }
 
-    public void end() {
-        follower.turnToDegrees(180);
+    public void stopEverything() {
         stopShoot();
         stopCollect();
         block();
