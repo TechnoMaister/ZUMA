@@ -134,9 +134,6 @@ public class Drive extends OpMode {
             else robot.collector.setVelocity(0);
             block.resetTimer();
         }
-
-        if(betterGamepad.dpad_left.held) robot.turn(pow, true);
-        else if(betterGamepad.dpad_right.held) robot.turn(pow, false);
     }
 
     public void drive(Gamepad gamepad){
@@ -146,6 +143,12 @@ public class Drive extends OpMode {
                 -gamepad.right_stick_x,
                 false
         );
+
+        if(betterGamepad.dpad_left.held) robot.turn(pow, true);
+        else if(betterGamepad.dpad_right.held) robot.turn(pow, false);
+
+        if(betterGamepad.triangle.pressed) Constants.localizerConstants.imu.resetYaw();
+
         follower.update();
     }
 
