@@ -57,5 +57,9 @@ public class RobotConstants {
     pickup1interPose = new Pose(60, 83, Math.toRadians(0)),
     pickup1Pose = new Pose(23, 83, Math.toRadians(0)),
     pickup2Pose = new Pose(37, 60, Math.toRadians(0)),
-    pickup3Pose = new Pose(37, 35, Math.toRadians(0));
+    pickup3Pose = new Pose(37, 35, Math.toRadians(0)),
+    startPoseST = new Pose(84, 8, Math.toRadians(90)),
+    scorePoseST = new Pose(84, 12.5, Math.toRadians(121)),
+    parkPose = new Pose(38, 33.5, Math.toRadians(0)),
+    parkPoseControlPoint = new Pose(121.5, 68.5);
 }

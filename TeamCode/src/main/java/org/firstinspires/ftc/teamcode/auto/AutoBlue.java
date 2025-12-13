@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.util.Hardware;
 import org.firstinspires.ftc.teamcode.util.RobotConstants;
 
-@Autonomous(name = "Blue", group = "Auto")
+@Autonomous(name = "Blue", group = "Auto Blue")
 public class AutoBlue extends OpMode {
 
     public Follower follower;
