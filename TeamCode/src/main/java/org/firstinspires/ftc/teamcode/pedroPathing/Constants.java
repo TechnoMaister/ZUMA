@@ -42,13 +42,13 @@ public class Constants {
             .turnTicksToInches(.002)
             .leftPodY(-3.7)
             .rightPodY(3.7)
-            .strafePodX(6.25)
+            .strafePodX(7.52)
             .leftEncoder_HardwareMapName("leftRear")
             .rightEncoder_HardwareMapName("rightFront")
             .strafeEncoder_HardwareMapName("leftFront")
             .leftEncoderDirection(Encoder.FORWARD)
             .rightEncoderDirection(Encoder.REVERSE)
-            .strafeEncoderDirection(Encoder.REVERSE)
+            .strafeEncoderDirection(Encoder.FORWARD)
             .IMU_HardwareMapName("imu")
             .IMU_Orientation(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.LEFT));
 

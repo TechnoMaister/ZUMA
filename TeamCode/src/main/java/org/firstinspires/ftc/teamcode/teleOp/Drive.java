@@ -73,7 +73,10 @@ public class Drive extends OpMode {
         robot.update();
         betterGamepad.update();
 
+
+
         drive(gamepad1);
+
 
         if (id != null) {
             distance = id.ftcPose.y-.14;
@@ -129,7 +132,7 @@ public class Drive extends OpMode {
         else if(betterGamepad.square.held) shoot(backup);
         else {
             for(DcMotorEx shooter : robot.shooters) shooter.setVelocity(0);
-            for (Servo blockerMotor : robot.blockers) blockerMotor.setPosition(blockerBlockedPos);
+            for (Servo blocker : robot.blockers) blocker.setPosition(blockerBlockedPos);
             if (betterGamepad.left_bumper.held) robot.collector.setVelocity(collector_multiplierD*vMax);
             else robot.collector.setVelocity(0);
             block.resetTimer();
@@ -156,11 +159,11 @@ public class Drive extends OpMode {
         for(DcMotorEx shooter : robot.shooters) shooter.setVelocity(velocity*vMax);
 
         if(block.getElapsedTime() >= blockT) {
-            for(Servo blockerMotor : robot.blockers) blockerMotor.setPosition(blockerOpenPos);
+            for(Servo blocker : robot.blockers) blocker.setPosition(blockerOpenPos);
             if(block.getElapsedTime() < blockT + collectorPulseT) robot.collector.setVelocity(collector_multiplierB * vMax);
             else robot.collector.setVelocity(collector_multiplierN * vMax);
         } else {
-            for(Servo blockerMotor : robot.blockers) blockerMotor.setPosition(blockerBlockedPos);
+            for(Servo blocker : robot.blockers) blocker.setPosition(blockerBlockedPos);
             robot.collector.setVelocity(0);
         }
     }
