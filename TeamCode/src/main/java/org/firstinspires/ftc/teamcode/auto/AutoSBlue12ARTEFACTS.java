@@ -181,7 +181,7 @@ public class AutoSBlue12ARTEFACTS extends OpMode {
                     if (!follower.isBusy()) {
                         if (actionTimer.getElapsedTime() < RobotConstants.scoreT) score();
                         else {
-                            stopShoot();
+                            stopEverything();
                             follower.followPath(parkingS, true);
                             setPathState(8);
                         }

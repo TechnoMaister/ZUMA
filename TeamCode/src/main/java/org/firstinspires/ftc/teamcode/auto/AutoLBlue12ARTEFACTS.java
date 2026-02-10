@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockerBlockedP
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockerOpenPos;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.open;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.scoreMult1;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.scoreT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.vMax;
 
@@ -117,7 +118,7 @@ public class AutoLBlue12ARTEFACTS extends OpMode {
                 break;
             case 1:
                 if (!follower.isBusy()) {
-                    if (actionTimer.getElapsedTime() < RobotConstants.scoreT) score();
+                    if (actionTimer.getElapsedTime() < scoreT) score();
                     else {
                         stopShoot();
                         block();
@@ -138,7 +139,7 @@ public class AutoLBlue12ARTEFACTS extends OpMode {
                 break;
             case 3:
                 if (!follower.isBusy()) {
-                    if (actionTimer.getElapsedTime() < RobotConstants.scoreT) score();
+                    if (actionTimer.getElapsedTime() < scoreT) score();
                     else {
                         stopShoot();
                         follower.followPath(interGrabPickup2L, true);
@@ -159,7 +160,7 @@ public class AutoLBlue12ARTEFACTS extends OpMode {
                 break;
             case 5:
                 if (!follower.isBusy())
-                    if (actionTimer.getElapsedTime() < RobotConstants.scoreT) score();
+                    if (actionTimer.getElapsedTime() < scoreT) score();
                     else {
                         stopShoot();
                         follower.followPath(interGrabPickup3L, true);
@@ -177,9 +178,9 @@ public class AutoLBlue12ARTEFACTS extends OpMode {
                 break;
             case 7:
                 if (!follower.isBusy()) {
-                    if (actionTimer.getElapsedTime() < RobotConstants.scoreT) score();
+                    if (actionTimer.getElapsedTime() < scoreT) score();
                     else {
-                        stopShoot();
+                        stopEverything();
                         follower.followPath(parkingL, true);
                         setPathState(8);
                     }

@@ -51,8 +51,8 @@ public class RobotConstants {
 
     public static Pose
 
-            startPoseS = new Pose(22.3, 125.1, Math.toRadians(143)),
-            scoreS = new Pose(59, 85.3, Math.toRadians(137)),
+            startPoseS = new Pose(22.3, 125.1, Math.toRadians(142.5)),
+            scoreS = new Pose(55.9, 91.3, Math.toRadians(137)),
             interCol1S = new Pose(40.6, 83.1, Math.toRadians(0)),
             col1S = new Pose(19.1, 83.1, Math.toRadians(0)),
             interCol2S = new Pose(40.6, 60.3, Math.toRadians(0)),
@@ -63,7 +63,7 @@ public class RobotConstants {
 
 
     startPoseL = new Pose(56, 8, Math.toRadians(90)),
-            scorePoseL = new Pose(72.5, 18.3, Math.toRadians(120)),
+            scorePoseL = new Pose(61.1, 18.1, Math.toRadians(113)),
             interCol1L = new Pose(41.1, 35.5, Math.toRadians(0)),
             col1L = new Pose(17.4, 35.5, Math.toRadians(0)),
             interCol2L = new Pose(41.1, 59.7, Math.toRadians(0)),
