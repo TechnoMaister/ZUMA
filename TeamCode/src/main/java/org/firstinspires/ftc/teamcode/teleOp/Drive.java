@@ -22,12 +22,16 @@ import static org.firstinspires.ftc.teamcode.util.RobotConstants.vMax;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.util.Timer;
+import com.qualcomm.hardware.bosch.BHI260IMU;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.util.BasketLauncher;
 import org.firstinspires.ftc.teamcode.util.Hardware;
@@ -61,6 +65,9 @@ public class Drive extends OpMode {
         betterGamepad = new BetterGamepad(gamepad1);
 
         launcher = new BasketLauncher();
+
+
+
     }
 
     @Override
@@ -72,8 +79,6 @@ public class Drive extends OpMode {
     public void loop() {
         robot.update();
         betterGamepad.update();
-
-
 
         drive(gamepad1);
 
@@ -150,7 +155,9 @@ public class Drive extends OpMode {
         if(betterGamepad.dpad_left.held) robot.turn(pow, true);
         else if(betterGamepad.dpad_right.held) robot.turn(pow, false);
 
-        if(betterGamepad.triangle.pressed) Constants.localizerConstants.imu.resetYaw();
+        if(betterGamepad.triangle.pressed) {
+            follower.setPose(new Pose(follower.getPose().getX(), follower.getPose().getY(), 0));
+        }
 
         follower.update();
     }
@@ -160,8 +167,8 @@ public class Drive extends OpMode {
 
         if(block.getElapsedTime() >= blockT) {
             for(Servo blocker : robot.blockers) blocker.setPosition(blockerOpenPos);
-            if(block.getElapsedTime() < blockT + collectorPulseT) robot.collector.setVelocity(collector_multiplierB * vMax);
-            else robot.collector.setVelocity(collector_multiplierN * vMax);
+            //if(block.getElapsedTime() < blockT + collectorPulseT) robot.collector.setVelocity(collector_multiplierB * vMax);
+            robot.collector.setVelocity(collector_multiplierN * vMax);
         } else {
             for(Servo blocker : robot.blockers) blocker.setPosition(blockerBlockedPos);
             robot.collector.setVelocity(0);

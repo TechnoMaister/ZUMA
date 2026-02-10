@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcode.auto;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockerBlockedPos;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockerOpenPos;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.open;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.pickup3Pose;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.scoreMult1;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.scoreMult2;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.scoreT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.vMax;
@@ -28,9 +30,9 @@ public class AutoBlueST extends OpMode {
 
     public Follower follower;
     public Timer pathTimer, actionTimer, opmodeTimer;
-    public Pose startPoseST, scorePoseST, parkPose;
+    public Pose startPoseST, scorePoseST, pickupPose, parkPose, goBackPose;
     public Path scorePreload;
-    public PathChain park;
+    public PathChain park, collect, goBack, goShoot;
     public Hardware robot;
     public int pathState;
 
@@ -38,6 +40,8 @@ public class AutoBlueST extends OpMode {
     public void init() {
         startPoseST = RobotConstants.startPoseST;
         scorePoseST = RobotConstants.scorePoseST;
+        pickupPose = RobotConstants.pickup3Pose;
+        goBackPose = RobotConstants.goBackPose;
         parkPose = RobotConstants.parkPose;
 
         pathTimer = new Timer();
@@ -55,6 +59,21 @@ public class AutoBlueST extends OpMode {
         scorePreload = new Path(new BezierLine(startPoseST, scorePoseST));
         scorePreload.setLinearHeadingInterpolation(startPoseST.getHeading(), scorePoseST.getHeading());
 
+        collect = follower.pathBuilder()
+                .addPath(new BezierLine(scorePoseST, pickupPose))
+                .setLinearHeadingInterpolation(scorePoseST.getHeading(), pickupPose.getHeading())
+                .build();
+
+        goBack = follower.pathBuilder()
+                .addPath(new BezierLine(pickupPose, goBackPose))
+                .setLinearHeadingInterpolation(pickupPose.getHeading(), goBackPose.getHeading())
+                .build();
+
+        goShoot = follower.pathBuilder()
+                .addPath(new BezierLine(goBackPose, scorePoseST))
+                .setLinearHeadingInterpolation(goBackPose.getHeading(), scorePoseST.getHeading())
+                .build();
+
         park = follower.pathBuilder()
                 .addPath(new BezierLine(scorePoseST, parkPose))
                 .setLinearHeadingInterpolation(scorePoseST.getHeading(), parkPose.getHeading())
@@ -65,17 +84,47 @@ public class AutoBlueST extends OpMode {
         switch (pathState) {
             case 0:
                 follower.followPath(scorePreload);
+                //collect();
                 setPathState(1);
                 break;
             case 1:
                 if(!follower.isBusy()) {
-                    if(actionTimer.getElapsedTime() < scoreT) score();
+                    //stopCollect();
+                    if(actionTimer.getElapsedTime() < scoreT/*+.5*scoreT*/) score();
                     else {
-                        stopEverything();
-                        follower.followPath(park,true);
-                        setPathState(-1);
+                        stopShoot();
+                        block();
+                        follower.followPath(collect,true);
+                        setPathState(2);
                     }
                 } else actionTimer.resetTimer();
+                break;
+            case 2:
+                if(!follower.isBusy()) {
+                    follower.followPath(goBack, true);
+                    setPathState(3);
+                } else actionTimer.resetTimer();
+                break;
+            case 3:
+                if(!follower.isBusy()) {
+                    collectB();
+                    follower.followPath(goShoot, true);
+                    setPathState(4);
+                } else actionTimer.resetTimer();
+                break;
+            case 4:
+                if(!follower.isBusy()) {
+                    stopCollect();
+                    if(actionTimer.getElapsedTime() < scoreT+.5*scoreT) score();
+                    else {
+                        stopEverything();
+                        setPathState(5);
+                    }
+                } else actionTimer.resetTimer();
+                break;
+            case 5:
+                follower.followPath(park);
+                setPathState(-1);
                 break;
         }
     }
@@ -124,12 +173,16 @@ public class AutoBlueST extends OpMode {
         robot.collector.setVelocity(vMax);
     }
 
+    public void collectB() {
+        robot.collector.setVelocity(-0.025*vMax);
+    }
+
     public void stopCollect() {
         robot.collector.setVelocity(0);
     }
 
     public void score() {
-        shoot(scoreMult1);
+        shoot(scoreMult2);
         if(actionTimer.getElapsedTime() >= shootT) {
             open();
             if(actionTimer.getElapsedTime() >= shootT+open) collect();

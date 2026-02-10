@@ -73,7 +73,7 @@ public class AutoRed extends OpMode {
                 .build();
 
         scorePickup1 = follower.pathBuilder()
-                .addPath(new BezierLine(pickup1Pose, scorePose))
+                .addPath(new BezierLine(pickup1Pose,     scorePose))
                 .setLinearHeadingInterpolation(pickup1Pose.getHeading(), scorePose1stPickup.getHeading())
                 .build();
 

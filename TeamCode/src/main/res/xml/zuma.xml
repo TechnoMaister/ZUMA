@@ -21,12 +21,10 @@
             <goBILDA5202SeriesMotor name="rightRear" port="2"/>
             <goBILDA5202SeriesMotor name="rightFront" port="3"/>
 
-
-
             <Servo name="rightBlocker" port="4"/>
             <Servo name="leftBlocker" port="5"/>
 
-            <LynxEmbeddedIMU name="imu" port="0" bus="0"/>
+            <goBILDAPinpoint name="pinpoint" port="0" bus="0"/>
 
         </LynxModule>
 

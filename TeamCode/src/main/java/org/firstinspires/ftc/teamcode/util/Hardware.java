@@ -5,8 +5,13 @@ import static org.firstinspires.ftc.teamcode.util.RobotConstants.SHOOTER_PIDF;
 
 import android.util.Size;
 
+import com.qualcomm.hardware.bosch.BHI260IMU;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -59,8 +64,8 @@ public class Hardware {
         leftBlocker = hardwareMap.get(Servo.class, "leftBlocker");
         rightBlocker = hardwareMap.get(Servo.class, "rightBlocker");
 
-        leftFront.setDirection(DcMotorEx.Direction.REVERSE);
-        leftRear.setDirection(DcMotorEx.Direction.REVERSE);
+        rightFront.setDirection(DcMotorEx.Direction.REVERSE);
+        rightRear.setDirection(DcMotorEx.Direction.REVERSE);
 
         leftShoot.setDirection(DcMotorEx.Direction.REVERSE);
 
