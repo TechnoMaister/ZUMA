@@ -42,6 +42,7 @@ public class BetterGamepad {
     public button right_finger_button = new button();
     public button left_trigger = new button();
     public button right_trigger = new button();
+    public button touchpad = new button();
 
     public joystick left_joystick = new joystick();
     public joystick right_joystick = new joystick();
@@ -83,6 +84,7 @@ public class BetterGamepad {
         right_joystick_button.update_held(internal_gamepad.right_stick_button);
         left_finger_button.update_held(internal_gamepad.touchpad_finger_1);
         right_finger_button.update_held(internal_gamepad.touchpad_finger_2);
+        touchpad.update_held(internal_gamepad.touchpad);
 
         left_trigger.update_held(internal_gamepad.left_trigger > 0.05);
         right_trigger.update_held(internal_gamepad.right_trigger > 0.05);

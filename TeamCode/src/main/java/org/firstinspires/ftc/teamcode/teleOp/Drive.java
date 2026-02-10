@@ -50,6 +50,13 @@ public class Drive extends OpMode {
     public double shooterVelocity, error, distance;
     public boolean direction, team;
 
+    public enum DriveState {
+        MANUAL_DRIVE,
+        AUTO_PARK_LOCK
+    }
+    private DriveState currentState = DriveState.MANUAL_DRIVE;
+    private Pose parkTargetPose = new Pose(56, 50, Math.toRadians(180));
+
     @Override
     public void init() {
         robot = new Hardware(hardwareMap);
@@ -65,9 +72,6 @@ public class Drive extends OpMode {
         betterGamepad = new BetterGamepad(gamepad1);
 
         launcher = new BasketLauncher();
-
-
-
     }
 
     @Override
@@ -80,7 +84,37 @@ public class Drive extends OpMode {
         robot.update();
         betterGamepad.update();
 
-        drive(gamepad1);
+        // State Machine for Driving Control
+        switch (currentState) {
+            case MANUAL_DRIVE:
+                drive(gamepad1);
+                if (betterGamepad.touchpad.pressed) {
+                    currentState = DriveState.AUTO_PARK_LOCK;
+                }
+                break;
+            case AUTO_PARK_LOCK:
+                /*
+                 * FTC LEGALITY:
+                 * This auto-park feature is compliant with FTC rules as driver-assisted automation:
+                 * 1. It is manually toggled by the driver (touchpad button).
+                 * 2. It does not perform autonomous scoring or game tasks; it only positions the robot.
+                 * 3. The driver retains rotational control (heading adjustment via right stick).
+                 * 4. The driver can override/disable it at any time with the same button.
+                 */
+                if (betterGamepad.touchpad.pressed) {
+                    currentState = DriveState.MANUAL_DRIVE;
+                    follower.startTeleopDrive();
+                    break;
+                }
+
+                // Heading adjustment via right joystick (FTC legal partial driver control)
+                double headingAdj = -gamepad1.right_stick_x * 0.3;
+                parkTargetPose = new Pose(parkTargetPose.getX(), parkTargetPose.getY(), parkTargetPose.getHeading() + headingAdj);
+
+                // Use Pedro Pathing's internal PIDF controllers to hold the target pose
+                follower.holdPoint(parkTargetPose);
+                break;
+        }
 
 
         if (id != null) {
@@ -94,6 +128,7 @@ public class Drive extends OpMode {
         }
 
         telemetry.addData("velocity", shooterVelocity*vMax);
+        telemetry.addData("DRIVE STATE", currentState);
 
         if (betterGamepad.right_trigger.pressed) direction = !direction;
         if (betterGamepad.cross.pressed) team = !team;
@@ -142,6 +177,7 @@ public class Drive extends OpMode {
             else robot.collector.setVelocity(0);
             block.resetTimer();
         }
+        follower.update();
     }
 
     public void drive(Gamepad gamepad){
@@ -158,8 +194,6 @@ public class Drive extends OpMode {
         if(betterGamepad.triangle.pressed) {
             follower.setPose(new Pose(follower.getPose().getX(), follower.getPose().getY(), 0));
         }
-
-        follower.update();
     }
 
     public void shoot(double velocity) {

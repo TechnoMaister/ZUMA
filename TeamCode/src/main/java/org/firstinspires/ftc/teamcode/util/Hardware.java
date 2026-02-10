@@ -5,13 +5,8 @@ import static org.firstinspires.ftc.teamcode.util.RobotConstants.SHOOTER_PIDF;
 
 import android.util.Size;
 
-import com.qualcomm.hardware.bosch.BHI260IMU;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -64,12 +59,14 @@ public class Hardware {
         leftBlocker = hardwareMap.get(Servo.class, "leftBlocker");
         rightBlocker = hardwareMap.get(Servo.class, "rightBlocker");
 
-        rightFront.setDirection(DcMotorEx.Direction.REVERSE);
-        rightRear.setDirection(DcMotorEx.Direction.REVERSE);
+        leftFront.setDirection(DcMotorEx.Direction.REVERSE);
+        leftRear.setDirection(DcMotorEx.Direction.REVERSE);
 
         leftShoot.setDirection(DcMotorEx.Direction.REVERSE);
 
         rightBlocker.setDirection(Servo.Direction.REVERSE);
+
+        // Scale ranges to allow single-value control (0.0 = Open, 1.0 = Blocked)
 
         motors = Arrays.asList(leftFront, leftRear, rightFront, rightRear, leftShoot, rightShoot, collector);
         chassis = Arrays.asList(leftFront, leftRear, rightFront, rightRear);
@@ -108,6 +105,12 @@ public class Hardware {
                 leftChassis.setPower(power);
             for (DcMotorEx rightChassis : rightChassis)
                 rightChassis.setPower(-power);
+        }
+    }
+
+    public void setBlockers(double position) {
+        for (Servo blocker : blockers) {
+            blocker.setPosition(position);
         }
     }
 }
