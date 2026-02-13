@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.auto;
 
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockerBlockedPos;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockerOpenPos;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.open;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.scoreMult1;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.scoreT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.vMax;
 
@@ -114,37 +116,49 @@ public class AutoSBlue12ARTEFACTS extends OpMode {
         switch (pathState) {
             case 0:
                 follower.followPath(scorePreloadS);
+                score();
                 setPathState(1);
                 break;
             case 1:
-                if (!follower.isBusy()) {
-                    if (actionTimer.getElapsedTime() < RobotConstants.scoreT) score();
-                    else {
-                        stopShoot();
-                        block();
-                        follower.followPath(interGrabPickup1S);
-                        follower.followPath(grabPickup1S, true);
-                        setPathState(2);
-                    }
+                if (actionTimer.getElapsedTime() < scoreT+70)
+                {
+                    if (actionTimer.getElapsedTime() > blockT)
+                        open();
+                    if (actionTimer.getElapsedTime() < scoreT +1000)
+                        collect();
+                }
+                else {
+                    stopShoot();
+                    block();
+                    follower.followPath(interGrabPickup1S);
+                    follower.followPath(grabPickup1S, true);
+                    setPathState(2);
                 }
                 break;
             case 2:
                 if (!follower.isBusy()) {
-                    if (actionTimer.getElapsedTime() > RobotConstants.collectT) {
+                    if (actionTimer.getElapsedTime() > scoreT) {
                         stopCollect();
                         follower.followPath(scorePickup1S, true);
+                        score();
                         setPathState(3);
                     }
                 }
                 break;
             case 3:
                 if (!follower.isBusy()) {
-                    if (actionTimer.getElapsedTime() < RobotConstants.scoreT) score();
-                    else {
+                    if (actionTimer.getElapsedTime() < scoreT + 500) {
+                        if (actionTimer.getElapsedTime() > scoreT + 8000)
+                            open();
+                        if (actionTimer.getElapsedTime() < scoreT + 10000)
+                            collect();
+                    } else {
                         stopShoot();
+                        block();
                         follower.followPath(interGrabPickup2S, true);
                         follower.followPath(grabPickup2S, true);
                         setPathState(4);
+
                     }
                 }
                 break;
@@ -153,6 +167,7 @@ public class AutoSBlue12ARTEFACTS extends OpMode {
                     if (actionTimer.getElapsedTime() > RobotConstants.collectT) {
                         stopCollect();
                         follower.followPath(scorePickup2S, true);
+                        score();
                         setPathState(5);
                     }
 
@@ -160,11 +175,18 @@ public class AutoSBlue12ARTEFACTS extends OpMode {
                 break;
             case 5:
                 if (!follower.isBusy())
-                    if (actionTimer.getElapsedTime() < RobotConstants.scoreT) score();
-                    else {
-                        stopShoot();
+                    if (actionTimer.getElapsedTime() < scoreT+1000)
+                    {
+                        if (actionTimer.getElapsedTime() > scoreT + 8000)
+                            open();
+                        if (actionTimer.getElapsedTime() < scoreT +10000)
+                            collect();
                         follower.followPath(interGrabPickup3S, true);
                         follower.followPath(grabPickup3S, true);
+                    }
+                    else {
+                        stopShoot();
+                        block();
                         setPathState(6);
                     }
                 break;
@@ -173,19 +195,23 @@ public class AutoSBlue12ARTEFACTS extends OpMode {
                     if (actionTimer.getElapsedTime() > RobotConstants.collectT) {
                         stopCollect();
                         follower.followPath(scorePickup3S, true);
+                        score();
                         setPathState(7);
                     }
                 break;
             case 7:
-                if (!follower.isBusy()) {
-                    if (!follower.isBusy()) {
-                        if (actionTimer.getElapsedTime() < RobotConstants.scoreT) score();
-                        else {
-                            stopEverything();
-                            follower.followPath(parkingS, true);
-                            setPathState(8);
-                        }
-                    }
+                if (actionTimer.getElapsedTime() < scoreT+1500)
+                {
+
+                    if (actionTimer.getElapsedTime() > scoreT + 3000)
+                        open();
+                    if (actionTimer.getElapsedTime() < scoreT +4000)
+                        collect();
+                }
+                else {
+                    stopEverything();
+                    follower.followPath(parkingS, true);
+                    setPathState(9);
                 }
                 break;
             case 8:
@@ -244,10 +270,6 @@ public class AutoSBlue12ARTEFACTS extends OpMode {
 
     public void score () {
         shoot(scoreMult1);
-        if (actionTimer.getElapsedTime() >= shootT) {
-            open();
-            if (actionTimer.getElapsedTime() >= shootT + open) collect();
-        }
     }
 
     public void stopEverything(){

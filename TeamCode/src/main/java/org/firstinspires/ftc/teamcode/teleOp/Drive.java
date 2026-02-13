@@ -55,7 +55,7 @@ public class Drive extends OpMode {
         AUTO_PARK_LOCK
     }
     private DriveState currentState = DriveState.MANUAL_DRIVE;
-    private Pose parkTargetPose = new Pose(56, 50, Math.toRadians(180));
+    private Pose parkTargetPose = new Pose(105.3, 33.3, Math.toRadians(180));
 
     @Override
     public void init() {
@@ -131,7 +131,10 @@ public class Drive extends OpMode {
         telemetry.addData("DRIVE STATE", currentState);
 
         if (betterGamepad.right_trigger.pressed) direction = !direction;
-        if (betterGamepad.cross.pressed) team = !team;
+        if (betterGamepad.cross.pressed) {
+            team = !team;
+            parkTargetPose = parkTargetPose.mirror();
+        }
 
         if (betterGamepad.dpad_up.pressed && backup < 1.0) backup += 0.05;
         else if (betterGamepad.dpad_down.pressed && backup > 0.0) backup -= 0.05;
@@ -144,6 +147,8 @@ public class Drive extends OpMode {
             id = robot.getTagBySpecificID(20);
             telemetry.addLine("BLUE");
         }
+
+
 
         if (direction) {
             robot.collector.setDirection(DcMotorEx.Direction.REVERSE);

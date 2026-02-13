@@ -114,11 +114,20 @@ public class AutoLBlue12ARTEFACTS extends OpMode {
         switch (pathState) {
             case 0:
                 follower.followPath(scorePreloadL);
+                score();
                 setPathState(1);
                 break;
             case 1:
                 if (!follower.isBusy()) {
-                    if (actionTimer.getElapsedTime() < scoreT) score();
+                    if (actionTimer.getElapsedTime() < scoreT+70)
+                    {
+                        if (actionTimer.getElapsedTime() < scoreT+100)
+                            score();
+                        if (actionTimer.getElapsedTime() < scoreT + 8000)
+                            open();
+                        if (actionTimer.getElapsedTime() < scoreT +10000)
+                            collect();
+                    }
                     else {
                         stopShoot();
                         block();
@@ -133,15 +142,25 @@ public class AutoLBlue12ARTEFACTS extends OpMode {
                     if (actionTimer.getElapsedTime() > RobotConstants.collectT) {
                         stopCollect();
                         follower.followPath(scorePickup1L, true);
+                        score();
                         setPathState(3);
                     }
                 }
                 break;
             case 3:
                 if (!follower.isBusy()) {
-                    if (actionTimer.getElapsedTime() < scoreT) score();
+                    if (actionTimer.getElapsedTime() < scoreT+500)
+                    {
+                        if (actionTimer.getElapsedTime() < scoreT+400)
+                            score();
+                        if (actionTimer.getElapsedTime() < scoreT + 8000)
+                            open();
+                        if (actionTimer.getElapsedTime() < scoreT +10000)
+                            collect();
+                    }
                     else {
                         stopShoot();
+                        block();
                         follower.followPath(interGrabPickup2L, true);
                         follower.followPath(grabPickup2L, true);
                         setPathState(4);
@@ -151,42 +170,66 @@ public class AutoLBlue12ARTEFACTS extends OpMode {
                 break;
             case 4:
                 if (!follower.isBusy()) {
-                    if (actionTimer.getElapsedTime() > RobotConstants.collectT) {
+                    if (actionTimer.getElapsedTime() > RobotConstants.collectT+400) {
                         stopCollect();
                         follower.followPath(scorePickup2L, true);
+                        score();
                         setPathState(5);
                     }
                 }
                 break;
             case 5:
                 if (!follower.isBusy())
-                    if (actionTimer.getElapsedTime() < scoreT) score();
+                    if (actionTimer.getElapsedTime() < scoreT+1000)
+                    {
+                        if (actionTimer.getElapsedTime() < scoreT+1000)
+                            score();
+                        if (actionTimer.getElapsedTime() < scoreT + 8000)
+                            open();
+                        if (actionTimer.getElapsedTime() < scoreT +10000)
+                            collect();
+                    }
                     else {
                         stopShoot();
-                        follower.followPath(interGrabPickup3L, true);
-                        follower.followPath(grabPickup3L, true);
+                        block();
                         setPathState(6);
                     }
                 break;
             case 6:
                 if (!follower.isBusy())
+                {
+                    follower.followPath(interGrabPickup3L, true);
+                    follower.followPath(grabPickup3L, true);
+                    setPathState(7);
+                }
+            case 7:
+                if (!follower.isBusy())
                     if (actionTimer.getElapsedTime() > RobotConstants.collectT) {
                         stopCollect();
                         follower.followPath(scorePickup3L, true);
-                        setPathState(7);
+                        score();
+                        setPathState(8);
                     }
                 break;
-            case 7:
+            case 8:
                 if (!follower.isBusy()) {
-                    if (actionTimer.getElapsedTime() < scoreT) score();
+                    if (actionTimer.getElapsedTime() < scoreT+1500)
+                    {
+                        if (actionTimer.getElapsedTime() < scoreT+1500)
+                            score();
+                        if (actionTimer.getElapsedTime() < scoreT + 3000)
+                            open();
+                        if (actionTimer.getElapsedTime() < scoreT +4000)
+                            collect();
+                    }
                     else {
                         stopEverything();
                         follower.followPath(parkingL, true);
-                        setPathState(8);
+                        setPathState(9);
                     }
                 }
                 break;
-            case 8:
+            case 9:
                 if (!follower.isBusy()) {
                     setPathState(-1);
                 }
@@ -198,6 +241,7 @@ public class AutoLBlue12ARTEFACTS extends OpMode {
     public void setPathState ( int pState){
         pathState = pState;
         pathTimer.resetTimer();
+        actionTimer.resetTimer();
     }
     @Override
     public void start () {
@@ -242,10 +286,6 @@ public class AutoLBlue12ARTEFACTS extends OpMode {
 
     public void score () {
         shoot(scoreMult1);
-        if (actionTimer.getElapsedTime() >= shootT) {
-            open();
-            if (actionTimer.getElapsedTime() >= shootT + open) collect();
-        }
     }
 
     public void stopEverything () {
