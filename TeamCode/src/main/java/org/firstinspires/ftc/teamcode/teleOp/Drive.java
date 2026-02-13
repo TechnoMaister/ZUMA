@@ -206,8 +206,8 @@ public class Drive extends OpMode {
 
         if(block.getElapsedTime() >= blockT) {
             for(Servo blocker : robot.blockers) blocker.setPosition(blockerOpenPos);
-            //if(block.getElapsedTime() < blockT + collectorPulseT) robot.collector.setVelocity(collector_multiplierB * vMax);
-            robot.collector.setVelocity(collector_multiplierN * vMax);
+            if(block.getElapsedTime() < blockT + collectorPulseT) robot.collector.setVelocity(collector_multiplierB * vMax);
+            else robot.collector.setVelocity(collector_multiplierN * vMax);
         } else {
             for(Servo blocker : robot.blockers) blocker.setPosition(blockerBlockedPos);
             robot.collector.setVelocity(0);
