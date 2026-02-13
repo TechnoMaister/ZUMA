@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.auto;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockerBlockedPos;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockerOpenPos;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.collectT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.open;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.scoreMult1;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.scoreT;
@@ -116,110 +117,86 @@ public class AutoSBlue12ARTEFACTS extends OpMode {
         switch (pathState) {
             case 0:
                 follower.followPath(scorePreloadS);
-                score();
                 setPathState(1);
                 break;
             case 1:
-                if (actionTimer.getElapsedTime() < scoreT+70)
-                {
-                    if (actionTimer.getElapsedTime() > blockT)
-                        open();
-                    if (actionTimer.getElapsedTime() < scoreT +1000)
-                        collect();
-                }
-                else {
-                    stopShoot();
-                    block();
-                    follower.followPath(interGrabPickup1S);
-                    follower.followPath(grabPickup1S, true);
-                    setPathState(2);
-                }
+                if(!follower.isBusy()) {
+                    if (actionTimer.getElapsedTime() < scoreT) score();
+                    else {
+                        stopShoot();
+                        block();
+                        follower.followPath(interGrabPickup1S);
+                        follower.followPath(grabPickup1S, true);
+                        setPathState(2);
+                    }
+                } else actionTimer.resetTimer();
                 break;
             case 2:
                 if (!follower.isBusy()) {
-                    if (actionTimer.getElapsedTime() > scoreT) {
+                    if (actionTimer.getElapsedTime() > collectT) {
                         stopCollect();
                         follower.followPath(scorePickup1S, true);
-                        score();
                         setPathState(3);
                     }
-                }
+                } else actionTimer.resetTimer();
                 break;
             case 3:
                 if (!follower.isBusy()) {
-                    if (actionTimer.getElapsedTime() < scoreT + 500) {
-                        if (actionTimer.getElapsedTime() > scoreT + 8000)
-                            open();
-                        if (actionTimer.getElapsedTime() < scoreT + 10000)
-                            collect();
-                    } else {
+                    if (actionTimer.getElapsedTime() < scoreT) score();
+                    else {
                         stopShoot();
                         block();
                         follower.followPath(interGrabPickup2S, true);
                         follower.followPath(grabPickup2S, true);
                         setPathState(4);
-
                     }
-                }
+                } else actionTimer.resetTimer();
                 break;
             case 4:
                 if (!follower.isBusy()) {
-                    if (actionTimer.getElapsedTime() > RobotConstants.collectT) {
+                    if (actionTimer.getElapsedTime() > collectT) {
                         stopCollect();
                         follower.followPath(scorePickup2S, true);
-                        score();
                         setPathState(5);
                     }
-
-                }
+                } else actionTimer.resetTimer();
                 break;
             case 5:
-                if (!follower.isBusy())
-                    if (actionTimer.getElapsedTime() < scoreT+1000)
-                    {
-                        if (actionTimer.getElapsedTime() > scoreT + 8000)
-                            open();
-                        if (actionTimer.getElapsedTime() < scoreT +10000)
-                            collect();
-                        follower.followPath(interGrabPickup3S, true);
-                        follower.followPath(grabPickup3S, true);
-                    }
+                if (!follower.isBusy()) {
+                    if (actionTimer.getElapsedTime() < scoreT) score();
                     else {
                         stopShoot();
                         block();
+                        follower.followPath(interGrabPickup3S, true);
+                        follower.followPath(grabPickup3S, true);
                         setPathState(6);
                     }
+                } else actionTimer.resetTimer();
                 break;
             case 6:
-                if (!follower.isBusy())
-                    if (actionTimer.getElapsedTime() > RobotConstants.collectT) {
+                if (!follower.isBusy()) {
+                    if (actionTimer.getElapsedTime() > collectT) {
                         stopCollect();
                         follower.followPath(scorePickup3S, true);
-                        score();
                         setPathState(7);
                     }
+                } else actionTimer.resetTimer();
                 break;
             case 7:
-                if (actionTimer.getElapsedTime() < scoreT+1500)
-                {
-
-                    if (actionTimer.getElapsedTime() > scoreT + 3000)
-                        open();
-                    if (actionTimer.getElapsedTime() < scoreT +4000)
-                        collect();
-                }
-                else {
-                    stopEverything();
-                    follower.followPath(parkingS, true);
-                    setPathState(9);
-                }
+                if(!follower.isBusy()) {
+                    if (actionTimer.getElapsedTime() < scoreT) score();
+                    else {
+                        stopEverything();
+                        follower.followPath(parkingS, true);
+                        setPathState(9);
+                    }
+                } else actionTimer.resetTimer();
                 break;
             case 8:
                 if (!follower.isBusy()) {
                     setPathState(-1);
                 }
                 break;
-
         }
     }
     public void setPathState ( int pState){
