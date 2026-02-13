@@ -22,16 +22,12 @@ import static org.firstinspires.ftc.teamcode.util.RobotConstants.vMax;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.util.Timer;
-import com.qualcomm.hardware.bosch.BHI260IMU;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.util.BasketLauncher;
 import org.firstinspires.ftc.teamcode.util.Hardware;
@@ -76,7 +72,7 @@ public class Drive extends OpMode {
 
     @Override
     public void start() {
-        follower.startTeleopDrive();
+        follower.startTeleopDrive(true);
     }
 
     @Override
@@ -93,21 +89,13 @@ public class Drive extends OpMode {
                 }
                 break;
             case AUTO_PARK_LOCK:
-                /*
-                 * FTC LEGALITY:
-                 * This auto-park feature is compliant with FTC rules as driver-assisted automation:
-                 * 1. It is manually toggled by the driver (touchpad button).
-                 * 2. It does not perform autonomous scoring or game tasks; it only positions the robot.
-                 * 3. The driver retains rotational control (heading adjustment via right stick).
-                 * 4. The driver can override/disable it at any time with the same button.
-                 */
                 if (betterGamepad.touchpad.pressed) {
                     currentState = DriveState.MANUAL_DRIVE;
-                    follower.startTeleopDrive();
+                    follower.startTeleopDrive(true);
                     break;
                 }
 
-                // Heading adjustment via right joystick (FTC legal partial driver control)
+                // Heading adjustment via right joystick
                 double headingAdj = -gamepad1.right_stick_x * 0.3;
                 parkTargetPose = new Pose(parkTargetPose.getX(), parkTargetPose.getY(), parkTargetPose.getHeading() + headingAdj);
 
@@ -148,8 +136,6 @@ public class Drive extends OpMode {
             telemetry.addLine("BLUE");
         }
 
-
-
         if (direction) {
             robot.collector.setDirection(DcMotorEx.Direction.REVERSE);
             gamepad1.setLedColor(1, 0, 0, Gamepad.LED_DURATION_CONTINUOUS);
@@ -186,12 +172,15 @@ public class Drive extends OpMode {
     }
 
     public void drive(Gamepad gamepad){
-        follower.setTeleOpDrive(
-                -gamepad.left_stick_y,
-                -gamepad.left_stick_x,
-                -gamepad.right_stick_x,
-                false
-        );
+        double y = -gamepad.left_stick_y;
+        double x = -gamepad.left_stick_x;
+        double rx = -gamepad.right_stick_x;
+
+        if (Math.abs(y) < 0.01 && Math.abs(x) < 0.01 && Math.abs(rx) < 0.01) {
+            follower.setTeleOpDrive(0, 0, 0, true);
+        } else {
+            follower.setTeleOpDrive(y, x, rx, false);
+        }
 
         if(betterGamepad.dpad_left.held) robot.turn(pow, true);
         else if(betterGamepad.dpad_right.held) robot.turn(pow, false);
