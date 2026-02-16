@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.util;
 
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.COLLECTOR_PIDF;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.SHOOTER_PIDF;
 
 import android.util.Size;
@@ -66,8 +65,6 @@ public class Hardware {
 
         rightBlocker.setDirection(Servo.Direction.REVERSE);
 
-        // Scale ranges to allow single-value control (0.0 = Open, 1.0 = Blocked)
-
         motors = Arrays.asList(leftFront, leftRear, rightFront, rightRear, leftShoot, rightShoot, collector);
         chassis = Arrays.asList(leftFront, leftRear, rightFront, rightRear);
         leftChassis = Arrays.asList(leftFront, leftRear);
@@ -80,8 +77,6 @@ public class Hardware {
 
         for (DcMotorEx shooter : shooters)
             shooter.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, SHOOTER_PIDF);
-
-        collector.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, COLLECTOR_PIDF);
     }
 
     public void update() {

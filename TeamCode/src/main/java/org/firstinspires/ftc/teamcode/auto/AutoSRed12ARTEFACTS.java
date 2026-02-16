@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.auto;
 
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockerBlockedPos;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockerOpenPos;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.collectT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.collectorPulseT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.collector_multiplierB;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.collector_multiplierN;
@@ -27,190 +27,183 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.util.Hardware;
 import org.firstinspires.ftc.teamcode.util.RobotConstants;
 
-@Autonomous(name = "AutoLongBlue12", group = "Auto Blue")
-public class AutoLBlue12ARTEFACTS extends OpMode {
+@Autonomous(name = "AutoSRed12", group = "Auto Red")
+public class AutoSRed12ARTEFACTS extends OpMode {
 
     public Follower follower;
     public Timer pathTimer, actionTimer, opmodeTimer;
-    public Pose startPoseL, scorePoseL, interCol1L, col1L, interCol2L, col2L, interCol3L, col3L, parkL;
-    public Path scorePreloadL;
-    public PathChain interGrabPickup1L, grabPickup1L, scorePickup1L, interGrabPickup2L, grabPickup2L, scorePickup2L, interGrabPickup3L, grabPickup3L, scorePickup3L, parkingL;
+    public Pose startPoseS, scoreS, interCol1S, col1S, interCol2S, col2S, interCol3S, col3S, parkS;
+    public Path scorePreloadS;
+    public PathChain interGrabPickup1S, grabPickup1S, scorePickup1S, interGrabPickup2S, grabPickup2S, scorePickup2S, interGrabPickup3S, grabPickup3S, scorePickup3S, parkingS;
     public Hardware robot;
     public int pathState;
 
     @Override
     public void init() {
-        startPoseL = RobotConstants.startPoseL;
-        scorePoseL = RobotConstants.scorePoseL;
-        interCol1L = RobotConstants.interCol1L;
-        col1L = RobotConstants.col1L;
-        interCol2L = RobotConstants.interCol2L;
-        col2L = RobotConstants.col2L;
-        interCol3L = RobotConstants.interCol3L;
-        col3L = RobotConstants.col3L;
-        parkL = RobotConstants.parkL;
+        startPoseS = RobotConstants.startPoseS.mirror();
+        scoreS = RobotConstants.scoreS.mirror();
+        interCol1S = RobotConstants.interCol1S.mirror();
+        col1S = RobotConstants.col1S.mirror();
+        interCol2S = RobotConstants.interCol2S.mirror();
+        col2S = RobotConstants.col2S.mirror();
+        interCol3S = RobotConstants.interCol3S.mirror();
+        col3S = RobotConstants.col3S.mirror();
+        parkS = RobotConstants.parkS.mirror();
 
         pathTimer = new Timer();
         actionTimer = new Timer();
         opmodeTimer = new Timer();
         follower = Constants.createFollower(hardwareMap);
         buildPaths();
-        follower.setStartingPose(startPoseL);
+        follower.setStartingPose(startPoseS);
+
         robot = new Hardware(hardwareMap);
     }
 
     public void buildPaths() {
-        scorePreloadL = new Path(new BezierLine(startPoseL, scorePoseL));
-        scorePreloadL.setLinearHeadingInterpolation(startPoseL.getHeading(), scorePoseL.getHeading());
+        scorePreloadS = new Path(new BezierLine(startPoseS, scoreS));
+        scorePreloadS.setLinearHeadingInterpolation(startPoseS.getHeading(), scoreS.getHeading());
 
-        interGrabPickup1L = follower.pathBuilder()
-                .addPath(new BezierLine(scorePoseL, interCol1L))
-                .setLinearHeadingInterpolation(scorePoseL.getHeading(), interCol1L.getHeading())
+        interGrabPickup1S = follower.pathBuilder()
+                .addPath(new BezierLine(scoreS, interCol1S))
+                .setLinearHeadingInterpolation(scoreS.getHeading(), interCol1S.getHeading())
                 .build();
 
-        grabPickup1L = follower.pathBuilder()
-                .addPath(new BezierLine(interCol1L, col1L))
-                .setConstantHeadingInterpolation(interCol1L.getHeading())
+        grabPickup1S = follower.pathBuilder()
+                .addPath(new BezierLine(interCol1S, col1S))
+                .setConstantHeadingInterpolation(interCol1S.getHeading())
                 .build();
 
-        scorePickup1L = follower.pathBuilder()
-                .addPath(new BezierLine(col1L, scorePoseL))
-                .setLinearHeadingInterpolation(col1L.getHeading(), scorePoseL.getHeading())
+        scorePickup1S = follower.pathBuilder()
+                .addPath(new BezierLine(col1S, scoreS))
+                .setLinearHeadingInterpolation(col1S.getHeading(), scoreS.getHeading())
                 .build();
 
-        interGrabPickup2L = follower.pathBuilder()
-                .addPath(new BezierLine(scorePoseL, interCol2L))
-                .setLinearHeadingInterpolation(scorePoseL.getHeading(), interCol2L.getHeading())
+        interGrabPickup2S = follower.pathBuilder()
+                .addPath(new BezierLine(scoreS, interCol2S))
+                .setLinearHeadingInterpolation(scoreS.getHeading(), interCol2S.getHeading())
                 .build();
 
-        grabPickup2L = follower.pathBuilder()
-                .addPath(new BezierLine(interCol2L, col2L))
-                .setConstantHeadingInterpolation(interCol2L.getHeading())
+        grabPickup2S = follower.pathBuilder()
+                .addPath(new BezierLine(interCol2S, col2S))
+                .setConstantHeadingInterpolation(interCol2S.getHeading())
                 .build();
 
-        scorePickup2L = follower.pathBuilder()
-                .addPath(new BezierLine(col2L, scorePoseL))
-                .setLinearHeadingInterpolation(col2L.getHeading(), scorePoseL.getHeading())
+        scorePickup2S = follower.pathBuilder()
+                .addPath(new BezierLine(col2S, scoreS))
+                .setLinearHeadingInterpolation(col2S.getHeading(), scoreS.getHeading())
                 .build();
 
-        interGrabPickup3L = follower.pathBuilder()
-                .addPath(new BezierLine(scorePoseL, interCol3L))
-                .setLinearHeadingInterpolation(scorePoseL.getHeading(), interCol3L.getHeading())
+        interGrabPickup3S = follower.pathBuilder()
+                .addPath(new BezierLine(scoreS, interCol3S))
+                .setLinearHeadingInterpolation(scoreS.getHeading(), interCol3S.getHeading())
                 .build();
 
-        grabPickup3L = follower.pathBuilder()
-                .addPath(new BezierLine(interCol3L, col3L))
-                .setConstantHeadingInterpolation(interCol3L.getHeading())
+        grabPickup3S = follower.pathBuilder()
+                .addPath(new BezierLine(interCol3S, col3S))
+                .setConstantHeadingInterpolation(interCol3S.getHeading())
                 .build();
 
-        scorePickup3L = follower.pathBuilder()
-                .addPath(new BezierLine(col3L, scorePoseL))
-                .setLinearHeadingInterpolation(col3L.getHeading(), scorePoseL.getHeading())
+        scorePickup3S = follower.pathBuilder()
+                .addPath(new BezierLine(col3S, scoreS))
+                .setLinearHeadingInterpolation(col3S.getHeading(), scoreS.getHeading())
                 .build();
 
-        parkingL = follower.pathBuilder()
-                .addPath(new BezierLine(scorePoseL, parkL))
-                .setLinearHeadingInterpolation(scorePoseL.getHeading(), parkL.getHeading())
+        parkingS = follower.pathBuilder()
+                .addPath(new BezierLine(scoreS, parkS))
+                .setLinearHeadingInterpolation(scoreS.getHeading(), parkS.getHeading())
                 .build();
     }
 
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                follower.followPath(scorePreloadL);
+                follower.followPath(scorePreloadS);
                 setPathState(1);
                 break;
             case 1:
-                if (!follower.isBusy()) {
+                if(!follower.isBusy()) {
                     if (actionTimer.getElapsedTime() < scoreT + 70) score();
                     else {
                         stopShoot();
                         block();
-                        follower.followPath(interGrabPickup1L);
-                        follower.followPath(grabPickup1L, true);
+                        follower.followPath(interGrabPickup1S);
+                        follower.followPath(grabPickup1S, true);
                         setPathState(2);
                     }
-                }
+                } else actionTimer.resetTimer();
                 break;
             case 2:
                 if (!follower.isBusy()) {
-                    if (actionTimer.getElapsedTime() > RobotConstants.collectT) {
+                    if (actionTimer.getElapsedTime() > collectT) {
                         stopCollect();
-                        follower.followPath(scorePickup1L, true);
+                        follower.followPath(scorePickup1S, true);
                         setPathState(3);
                     }
-                }
+                } else actionTimer.resetTimer();
                 break;
             case 3:
                 if (!follower.isBusy()) {
-                    if (actionTimer.getElapsedTime() < scoreT + 800) score();
+                    if (actionTimer.getElapsedTime() < scoreT + 500) score();
                     else {
                         stopShoot();
                         block();
-                        follower.followPath(interGrabPickup2L, true);
-                        follower.followPath(grabPickup2L, true);
+                        follower.followPath(interGrabPickup2S, true);
+                        follower.followPath(grabPickup2S, true);
                         setPathState(4);
-
                     }
-                }
+                } else actionTimer.resetTimer();
                 break;
             case 4:
                 if (!follower.isBusy()) {
-                    if (actionTimer.getElapsedTime() > RobotConstants.collectT + 400) {
+                    if (actionTimer.getElapsedTime() > collectT + 400) {
                         stopCollect();
-                        follower.followPath(scorePickup2L, true);
+                        follower.followPath(scorePickup2S, true);
                         setPathState(5);
                     }
-                }
+                } else actionTimer.resetTimer();
                 break;
             case 5:
                 if (!follower.isBusy()) {
-                    if (actionTimer.getElapsedTime() < scoreT + 1200) score();
+                    if (actionTimer.getElapsedTime() < scoreT + 1000) score();
                     else {
                         stopShoot();
                         block();
+                        follower.followPath(interGrabPickup3S, true);
+                        follower.followPath(grabPickup3S, true);
                         setPathState(6);
                     }
-                }
+                } else actionTimer.resetTimer();
                 break;
             case 6:
-                if (!follower.isBusy())
-                {
-                    follower.followPath(interGrabPickup3L, true);
-                    follower.followPath(grabPickup3L, true);
-                    setPathState(7);
-                }
-            case 7:
-                if (!follower.isBusy())
-                    if (actionTimer.getElapsedTime() > RobotConstants.collectT) {
-                        stopCollect();
-                        follower.followPath(scorePickup3L, true);
-                        setPathState(8);
-                    }
-                break;
-            case 8:
                 if (!follower.isBusy()) {
-                    if (actionTimer.getElapsedTime() < scoreT + 1700) score();
+                    if (actionTimer.getElapsedTime() > collectT) {
+                        stopCollect();
+                        follower.followPath(scorePickup3S, true);
+                        setPathState(7);
+                    }
+                } else actionTimer.resetTimer();
+                break;
+            case 7:
+                if(!follower.isBusy()) {
+                    if (actionTimer.getElapsedTime() < scoreT + 1500) score();
                     else {
                         stopEverything();
-                        follower.followPath(parkingL, true);
+                        follower.followPath(parkingS, true);
                         setPathState(9);
                     }
-                }
+                } else actionTimer.resetTimer();
                 break;
-            case 9:
+            case 8:
                 if (!follower.isBusy()) {
                     setPathState(-1);
                 }
                 break;
-
-
         }
     }
     public void setPathState ( int pState){
         pathState = pState;
         pathTimer.resetTimer();
-        actionTimer.resetTimer();
     }
     @Override
     public void start () {
@@ -232,8 +225,6 @@ public class AutoLBlue12ARTEFACTS extends OpMode {
 
     public void shoot ( double velocity){
         for (DcMotorEx shooter : robot.shooters) shooter.setVelocity(velocity * vMax);
-
-
     }
 
     public void stopShoot () {
@@ -249,9 +240,10 @@ public class AutoLBlue12ARTEFACTS extends OpMode {
     }
 
     public void collect () {
-        if(actionTimer.getElapsedTime() < shootT + open + collectorPulseT + 30) robot.collector.setPower(-.2);
+        if(actionTimer.getElapsedTime() < shootT + open + collectorPulseT + 27) robot.collector.setVelocity(collector_multiplierB * vMax);
         else robot.collector.setVelocity(collector_multiplierN * vMax);
     }
+
     public void stopCollect () {
         robot.collector.setVelocity(0);
     }
@@ -264,7 +256,7 @@ public class AutoLBlue12ARTEFACTS extends OpMode {
         }
     }
 
-    public void stopEverything () {
+    public void stopEverything(){
         stopShoot();
         stopCollect();
         block();

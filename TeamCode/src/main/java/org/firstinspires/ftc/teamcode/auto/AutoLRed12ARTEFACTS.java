@@ -2,11 +2,13 @@ package org.firstinspires.ftc.teamcode.auto;
 
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockerBlockedPos;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockerOpenPos;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.collectT2;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.collectorPulseT;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.collector_multiplierB;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.collector_multiplierN;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.scoreMult;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootT1;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootT2;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.open;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.scoreMult1;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.scoreT;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.vMax;
 
 import com.pedropathing.follower.Follower;
@@ -24,8 +26,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.util.Hardware;
 import org.firstinspires.ftc.teamcode.util.RobotConstants;
 
-@Autonomous(name = "AutoBlue", group = "Auto Blue")
-public class AutoBlue extends OpMode {
+@Autonomous(name = "AutoLRed12", group = "Auto Red")
+public class AutoLRed12ARTEFACTS extends OpMode {
 
     public Follower follower;
     public Timer pathTimer, actionTimer, opmodeTimer;
@@ -37,15 +39,15 @@ public class AutoBlue extends OpMode {
 
     @Override
     public void init() {
-        startPoseL = RobotConstants.startPoseL;
-        scorePoseL = RobotConstants.scorePoseL;
-        interCol1L = RobotConstants.interCol1L;
-        col1L = RobotConstants.col1L;
-        interCol2L = RobotConstants.interCol2L;
-        col2L = RobotConstants.col2L;
-        interCol3L = RobotConstants.interCol3L;
-        col3L = RobotConstants.col3L;
-        parkL = RobotConstants.parkL;
+        startPoseL = RobotConstants.startPoseL.mirror();
+        scorePoseL = RobotConstants.scorePoseL.mirror();
+        interCol1L = RobotConstants.interCol1L.mirror();
+        col1L = RobotConstants.col1L.mirror();
+        interCol2L = RobotConstants.interCol2L.mirror();
+        col2L = RobotConstants.col2L.mirror();
+        interCol3L = RobotConstants.interCol3L.mirror();
+        col3L = RobotConstants.col3L.mirror();
+        parkL = RobotConstants.parkL.mirror();
 
         pathTimer = new Timer();
         actionTimer = new Timer();
@@ -119,93 +121,82 @@ public class AutoBlue extends OpMode {
                 break;
             case 1:
                 if (!follower.isBusy()) {
-                    if (actionTimer.getElapsedTime() <= shootT1) shoot(scoreMult);
-                    else if(actionTimer.getElapsedTime() <= shootT2) {
-                        collect();
-                        open();
-                    } else {
+                    if (actionTimer.getElapsedTime() < scoreT + 70) score();
+                    else {
                         stopShoot();
                         block();
                         follower.followPath(interGrabPickup1L);
                         follower.followPath(grabPickup1L, true);
                         setPathState(2);
                     }
-                } else actionTimer.resetTimer();
+                }
                 break;
             case 2:
                 if (!follower.isBusy()) {
-                    if (actionTimer.getElapsedTime() >= collectT2) {
+                    if (actionTimer.getElapsedTime() > RobotConstants.collectT) {
                         stopCollect();
                         follower.followPath(scorePickup1L, true);
                         setPathState(3);
                     }
-                } else actionTimer.resetTimer();
+                }
                 break;
             case 3:
                 if (!follower.isBusy()) {
-                    if (actionTimer.getElapsedTime() <= shootT1) {
-                        shoot(scoreMult);
-                    } else if(actionTimer.getElapsedTime() <= shootT2) {
-                        collect();
-                        open();
-                    } else {
+                    if (actionTimer.getElapsedTime() < scoreT + 500) score();
+                    else {
                         stopShoot();
                         block();
-                        follower.followPath(interGrabPickup2L);
+                        follower.followPath(interGrabPickup2L, true);
                         follower.followPath(grabPickup2L, true);
                         setPathState(4);
+
                     }
-                } else actionTimer.resetTimer();
+                }
                 break;
             case 4:
                 if (!follower.isBusy()) {
-                    if (actionTimer.getElapsedTime() >= collectT2) {
+                    if (actionTimer.getElapsedTime() > RobotConstants.collectT + 400) {
                         stopCollect();
                         follower.followPath(scorePickup2L, true);
                         setPathState(5);
                     }
-                } else actionTimer.resetTimer();
+                }
                 break;
             case 5:
-                if (!follower.isBusy()) {
-                    if (actionTimer.getElapsedTime() <= shootT1) {
-                        shoot(scoreMult);
-                    } else if(actionTimer.getElapsedTime() <= shootT2) {
-                        collect();
-                        open();
-                    } else {
+                if (!follower.isBusy())
+                    if (actionTimer.getElapsedTime() < scoreT + 1000) score();
+                    else {
                         stopShoot();
                         block();
-                        follower.followPath(interGrabPickup3L, true);
-                        follower.followPath(grabPickup3L, true);
                         setPathState(6);
                     }
-                } else actionTimer.resetTimer();
                 break;
             case 6:
-                if (!follower.isBusy()) {
-                    if (actionTimer.getElapsedTime() >= collectT2) {
+                if (!follower.isBusy())
+                {
+                    follower.followPath(interGrabPickup3L, true);
+                    follower.followPath(grabPickup3L, true);
+                    setPathState(7);
+                }
+            case 7:
+                if (!follower.isBusy())
+                    if (actionTimer.getElapsedTime() > RobotConstants.collectT) {
                         stopCollect();
                         follower.followPath(scorePickup3L, true);
-                        setPathState(7);
-                    }
-                } else actionTimer.resetTimer();
-                break;
-            case 7:
-                if (!follower.isBusy()) {
-                    if (actionTimer.getElapsedTime() <= shootT1) {
-                        shoot(scoreMult);
-                    } else if(actionTimer.getElapsedTime() <= shootT2) {
-                        collect();
-                        open();
-                    } else {
-                        stopEverything();
-                        follower.followPath(parkingL, true);
                         setPathState(8);
                     }
-                } else actionTimer.resetTimer();
                 break;
             case 8:
+                if (!follower.isBusy()) {
+                    if (actionTimer.getElapsedTime() < scoreT + 1500) score();
+                    else {
+                        stopEverything();
+                        follower.followPath(parkingL, true);
+                        setPathState(9);
+                    }
+                }
+                break;
+            case 9:
                 if (!follower.isBusy()) {
                     setPathState(-1);
                 }
@@ -254,10 +245,19 @@ public class AutoBlue extends OpMode {
     }
 
     public void collect () {
-        robot.collector.setVelocity(collector_multiplierN * vMax);
+        if(actionTimer.getElapsedTime() < shootT + open + collectorPulseT + 27) robot.collector.setVelocity(collector_multiplierB * vMax);
+        else robot.collector.setVelocity(collector_multiplierN * vMax);
     }
     public void stopCollect () {
         robot.collector.setVelocity(0);
+    }
+
+    public void score () {
+        shoot(scoreMult1);
+        if(actionTimer.getElapsedTime() >= shootT) {
+            open();
+            if(actionTimer.getElapsedTime() >= shootT+open) collect();
+        }
     }
 
     public void stopEverything () {
@@ -265,4 +265,5 @@ public class AutoBlue extends OpMode {
         stopCollect();
         block();
     }
+
 }
