@@ -7,36 +7,28 @@ import com.bylazar.configurables.annotations.Configurable;
 @Configurable
 public class RobotConstants {
     public static double
-
-    collector_multiplierN = 1,
-    collector_multiplierD = 1,
-    collectorReverse = .1,
-    collector_multiplierB = -.5,
+    collectorReverse = -.1,
     blockerBlockedPos = .6,
     blockerOpenPos = .38,
+    vMax = 2800,
+    minMult = .8,
+    midMult = .85,
+    maxMult = .92,
+    dMid = 80,
+    dMax = 110,
     rumblingT = 250,
     blockT = 500,
-    collectorPulseT = 30,
-    pow = .2,
-    tolerance = 250,
-    backup = 1,
-    offset = 35,
-    vMax = 2800,
-    errorMin = .7,
-    errorMid = .67,
-    errorMax = .61,
-    dMid = 1,
-    dMax = 2,
-    scoreT = 2000,
-    collectT = 1000,
-    collectT2 = 400,
-    shootT = 750,
+    collectT = 400,
+    backCollectT = 600,
     shootT1 = 250,
     shootT2 = 1000,
-    open = 250,
-    scoreMult = .77,
     scoreMult1 = .773,
-    scoreMult2 = .8;
+    scoreMult2 = .8,
+    scoreMult3 = .9,
+    blueX = 12,
+    redX = 131,
+    goalsY = 137,
+    slow = .5;
 
     public static
 
@@ -45,48 +37,24 @@ public class RobotConstants {
             0,
             10,
             12
-    ),
-
-    COLLECTOR_PIDF = new PIDFCoefficients(
-            20,
-            0,
-            10,
-            12
     );
 
     public static Pose
 
-            startPoseS = new Pose(22.3, 125.1, Math.toRadians(142.5)),
-            scoreS = new Pose(55.9, 91.3, Math.toRadians(137)),
-            interCol1S = new Pose(46.6, 83.1, Math.toRadians(0)),
-            col1S = new Pose(16.1, 83.1, Math.toRadians(0)),
-            interCol2S = new Pose(46.6, 60.3, Math.toRadians(0)),
-            col2S = new Pose(16.1, 60.3, Math.toRadians(0)),
-            interCol3S = new Pose(46.6, 35.7, Math.toRadians(0)),
-            col3S = new Pose(16.1, 35.7, Math.toRadians(0)),
-            parkS = new Pose(20.5, 70.1, Math.toRadians(180)),
-
-
     startPoseL = new Pose(56, 8, Math.toRadians(90)),
-            scorePoseL = new Pose(61.1, 18.1, Math.toRadians(112)),
-            interCol1L = new Pose(47.1, 35.5, Math.toRadians(0)),
-            col1L = new Pose(8, 35.5, Math.toRadians(0)),
-            interCol2L = new Pose(47.1, 59.7, Math.toRadians(0)),
-            col2L = new Pose(7, 59.7, Math.toRadians(0)),
-            interCol3L = new Pose(47.1, 83.9, Math.toRadians(0)),
-            col3L = new Pose(10, 83.9, Math.toRadians(0)),
-            parkL = new Pose(61.1, 30, Math.toRadians(180)),
-
-    startPose = new Pose(23.5, 126.5, Math.toRadians(142.5)),
-    scorePose = new Pose(60, 95, Math.toRadians(142.5)),
-    scorePose1stPickup = new Pose(60, 85, Math.toRadians(142.5)),
-    scorePose2 = new Pose(65, 25, Math.toRadians(120)),
-    pickup1interPose = new Pose(60, 83, Math.toRadians(0)),
-    pickup1Pose = new Pose(23, 83, Math.toRadians(0)),
-    pickup2Pose = new Pose(37, 60, Math.toRadians(0)),
-    pickup3Pose = new Pose(37, 35, Math.toRadians(0)),
-    goBackPose = new Pose(10, 35, Math.toRadians(0)),
-    startPoseST = new Pose(60, 8, Math.toRadians(90)),
-    scorePoseST = new Pose(60, 12.5, Math.toRadians(112.5)),
-    parkPose = new Pose(56, 50, Math.toRadians(180));
+    startPoseC = new Pose(17.7, 118.8, Math.toRadians(323)),
+    shootPoseL = new Pose(56, 11, Math.toRadians(111)),
+    shootCtrPose = new Pose(58.3, 58.3),
+    shootPoseC = new Pose(46.5, 92.3, Math.toRadians(126)),
+    shootPoseC2 = new Pose(34, 103, Math.toRadians(126)),
+    collect1Pose = new Pose(10, 35, Math.toRadians(0)),
+    collect1CtrPoseL = new Pose(60, 40),
+    collect2Pose = new Pose(10, 57, Math.toRadians(0)),
+    collect2CtrPoseL = new Pose(72, 72),
+    collect2CtrPoseC = new Pose(71.5, 60),
+    collect3Pose = new Pose(15.5, 84.5, Math.toRadians(0)),
+    collect3CtrPoseL = new Pose(47, 81.6),
+    collect3CtrPoseC = new Pose(62, 81),
+    parkPose1 = new Pose(20, 70, Math.toRadians(0)),
+    parkPose2 = new Pose(56, 27, Math.toRadians(180));
 }

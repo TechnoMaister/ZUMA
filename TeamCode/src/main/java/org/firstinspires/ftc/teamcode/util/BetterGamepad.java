@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.util.ThankYouVV;
+package org.firstinspires.ftc.teamcode.util;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 public class BetterGamepad {
