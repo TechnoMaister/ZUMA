@@ -122,9 +122,6 @@ public class Drive extends OpMode {
                 false
         );
 
-        if(betterGamepad.right_trigger.pressed && !team) follower.setPose(new Pose(follower.getPose().getX(), follower.getPose().getY(), Math.toRadians(0)));
-        else if(betterGamepad.right_trigger.pressed) follower.setPose(new Pose(follower.getPose().getX(), follower.getPose().getY(), Math.toRadians(180)));
-
         follower.update();
     }
 
