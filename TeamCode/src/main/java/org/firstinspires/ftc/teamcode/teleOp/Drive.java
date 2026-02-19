@@ -53,6 +53,9 @@ public class Drive extends OpMode {
         rumbling2 = new Timer();
         block = new Timer();
 
+        if(team) goalX = redX;
+        else goalX = blueX;
+
         betterGamepad = new BetterGamepad(gamepad1);
     }
 
@@ -66,9 +69,6 @@ public class Drive extends OpMode {
         betterGamepad.update();
 
         if (betterGamepad.left_trigger.pressed) direction = !direction;
-
-        if(team) goalX = redX;
-        else goalX = blueX;
 
         if (direction) {
             robot.collector.setDirection(DcMotorEx.Direction.REVERSE);
