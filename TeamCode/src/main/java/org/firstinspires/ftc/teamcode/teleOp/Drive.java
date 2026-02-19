@@ -7,17 +7,20 @@ import static org.firstinspires.ftc.teamcode.util.RobotConstants.blueX;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.collectorReverse;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.dMax;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.dMid;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.goalsY;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.goalY;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.maxMult;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.midMult;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.minMult;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.redX;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.rumblingT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.slow;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.robotPose;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.team;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.vMax;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.MathFunctions;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -33,18 +36,17 @@ import org.firstinspires.ftc.teamcode.util.BetterGamepad;
 public class Drive extends OpMode {
     public Hardware robot;
     public Follower follower;
-    public Pose startingPose;
     public BetterGamepad betterGamepad;
     public Timer rumbling, rumbling2, block;
     public double shootMult, speed, speedR, targetHeading, headingError, rotCmd, goalX, distance;
-    public boolean direction, team;
+    public boolean direction;
 
     @Override
     public void init() {
         robot = new Hardware(hardwareMap);
 
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(startingPose == null ? new Pose() : startingPose);
+        follower.setStartingPose(robotPose);
         follower.update();
 
         rumbling = new Timer();
@@ -64,7 +66,6 @@ public class Drive extends OpMode {
         betterGamepad.update();
 
         if (betterGamepad.left_trigger.pressed) direction = !direction;
-        if (betterGamepad.right_trigger.pressed) team = !team;
 
         if(team) goalX = redX;
         else goalX = blueX;
@@ -121,13 +122,14 @@ public class Drive extends OpMode {
                 false
         );
 
-        if(betterGamepad.cross.pressed) follower.setPose(new Pose(follower.getPose().getX(), follower.getPose().getY(), 0));
+        if(betterGamepad.right_trigger.pressed && !team) follower.setPose(new Pose(follower.getPose().getX(), follower.getPose().getY(), Math.toRadians(0)));
+        else if(betterGamepad.right_trigger.pressed) follower.setPose(new Pose(follower.getPose().getX(), follower.getPose().getY(), Math.toRadians(180)));
 
         follower.update();
     }
 
     public void shoot(double multiplier) {
-        for(DcMotorEx shooter : robot.shooters) shooter.setVelocity(multiplier*vMax);
+        for(DcMotorEx shooter : robot.shooters) shooter.setVelocity(MathFunctions.clamp(multiplier, .01, 1) * vMax);
         for(Servo blocker : robot.blockers) blocker.setPosition(blockerOpenPos);
 
         if(block.getElapsedTime() >= blockT) robot.collector.setVelocity(vMax);
@@ -136,7 +138,7 @@ public class Drive extends OpMode {
 
     public double angleWrap(double angle) { while (angle > Math.PI) angle -= 2 * Math.PI; while (angle < -Math.PI) angle += 2 * Math.PI; return angle; }
 
-    public double headingToGoal(Pose pose) { double dx = goalX - pose.getPose().getX(); double dy = goalsY - pose.getPose().getY(); return Math.atan2(dy, dx); }
+    public double headingToGoal(Pose pose) { double dx = goalX - pose.getPose().getX(); double dy = goalY - pose.getPose().getY(); return Math.atan2(dy, dx); }
 
-    public double distanceToGoal(Pose pose) { double dx = goalX - pose.getPose().getX(); double dy = goalsY - pose.getPose().getY(); return Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2)); }
+    public double distanceToGoal(Pose pose) { double dx = goalX - pose.getPose().getX(); double dy = goalY - pose.getPose().getY(); return Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2)); }
 }

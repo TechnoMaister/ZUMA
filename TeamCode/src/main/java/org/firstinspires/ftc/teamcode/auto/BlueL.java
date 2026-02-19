@@ -9,6 +9,7 @@ import static org.firstinspires.ftc.teamcode.util.RobotConstants.collect3CtrPose
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.collectT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.collectorReverse;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.parkPose1;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.robotPose;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.scoreMult1;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.scoreMult2;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.scoreMult3;
@@ -19,11 +20,13 @@ import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootT1;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootT2;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.startPoseL;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.vMax;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.team;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.MathFunctions;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
@@ -63,6 +66,8 @@ public class BlueL extends OpMode {
         collect3Pose = RobotConstants.collect3Pose;
         collect3CtrPose = collect3CtrPoseL;
         parkPose = parkPose1;
+
+        team = false;
 
         pathTimer = new Timer();
         actionTimer = new Timer();
@@ -227,6 +232,8 @@ public class BlueL extends OpMode {
         follower.update();
         autonomousPathUpdate();
 
+        robotPose = follower.getPose();
+
         telemetry.addData("path state", pathState);
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());
@@ -236,7 +243,7 @@ public class BlueL extends OpMode {
     }
 
     public void shoot(double multiplier){
-        for (DcMotorEx shooter : robot.shooters) shooter.setVelocity(multiplier * vMax);
+        for (DcMotorEx shooter : robot.shooters) shooter.setVelocity(MathFunctions.clamp(multiplier, .01, 1) * vMax);
     }
 
     public void score(double scoreMult) {

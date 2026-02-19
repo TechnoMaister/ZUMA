@@ -11,17 +11,12 @@ import java.util.List;
 
 public class Hardware {
 
-    public DcMotorEx leftFront, leftRear, rightFront, rightRear, collector, leftShoot, rightShoot;
+    public DcMotorEx collector, leftShoot, rightShoot;
     public Servo leftBlocker, rightBlocker;
     public List<Servo> blockers;
-    public List<DcMotorEx> motors, shooters, chassis, leftChassis, rightChassis;
+    public List<DcMotorEx> motors, shooters;
 
     public Hardware(HardwareMap hardwareMap){
-
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
-        rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
 
         collector = hardwareMap.get(DcMotorEx.class, "collector");
 
@@ -31,17 +26,11 @@ public class Hardware {
         leftBlocker = hardwareMap.get(Servo.class, "leftBlocker");
         rightBlocker = hardwareMap.get(Servo.class, "rightBlocker");
 
-        leftFront.setDirection(DcMotorEx.Direction.REVERSE);
-        leftRear.setDirection(DcMotorEx.Direction.REVERSE);
-
         leftShoot.setDirection(DcMotorEx.Direction.REVERSE);
 
         rightBlocker.setDirection(Servo.Direction.REVERSE);
 
-        motors = Arrays.asList(leftFront, leftRear, rightFront, rightRear, leftShoot, rightShoot, collector);
-        chassis = Arrays.asList(leftFront, leftRear, rightFront, rightRear);
-        leftChassis = Arrays.asList(leftFront, leftRear);
-        rightChassis = Arrays.asList(rightFront, rightRear);
+        motors = Arrays.asList(leftShoot, rightShoot, collector);
         shooters = Arrays.asList(leftShoot, rightShoot);
         blockers = Arrays.asList(leftBlocker, rightBlocker);
 

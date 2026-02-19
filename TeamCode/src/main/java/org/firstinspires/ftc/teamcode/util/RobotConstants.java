@@ -27,8 +27,12 @@ public class RobotConstants {
     scoreMult3 = .9,
     blueX = 12,
     redX = 131,
-    goalsY = 137,
+    goalY = 137,
     slow = .5;
+
+    public static boolean
+
+    team;
 
     public static
 
@@ -56,5 +60,6 @@ public class RobotConstants {
     collect3CtrPoseL = new Pose(47, 81.6),
     collect3CtrPoseC = new Pose(62, 81),
     parkPose1 = new Pose(20, 70, Math.toRadians(0)),
-    parkPose2 = new Pose(56, 27, Math.toRadians(180));
+    parkPose2 = new Pose(56, 27, Math.toRadians(180)),
+    robotPose;
 }
