@@ -63,5 +63,5 @@ public class RobotConstants {
     collect3CtrPoseC = new Pose(62, 81),
     parkPose1 = new Pose(20, 70, Math.toRadians(0)),
     parkPose2 = new Pose(56, 27, Math.toRadians(180)),
-    robotPose;
+    robotPose = new Pose(72, 72, Math.toRadians(90));
 }
