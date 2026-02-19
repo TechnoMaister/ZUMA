@@ -12,7 +12,7 @@ import java.util.List;
 public class Hardware {
 
     public DcMotorEx collector, leftShoot, rightShoot;
-    public Servo leftBlocker, rightBlocker;
+    public Servo leftBlocker, rightBlocker, rightJack, leftJack;;
     public List<Servo> blockers;
     public List<DcMotorEx> motors, shooters;
 
@@ -25,6 +25,9 @@ public class Hardware {
 
         leftBlocker = hardwareMap.get(Servo.class, "leftBlocker");
         rightBlocker = hardwareMap.get(Servo.class, "rightBlocker");
+
+        rightJack = hardwareMap.get(Servo.class, "rightJack");
+        leftJack = hardwareMap.get(Servo.class, "leftJack");
 
         leftShoot.setDirection(DcMotorEx.Direction.REVERSE);
 

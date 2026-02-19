@@ -8,10 +8,12 @@ import static org.firstinspires.ftc.teamcode.util.RobotConstants.collectorRevers
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.dMax;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.dMid;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.goalY;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.leftJackUp;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.maxMult;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.midMult;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.minMult;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.redX;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.rightJackUp;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.rumblingT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.slow;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.robotPose;
@@ -69,6 +71,11 @@ public class Drive extends OpMode {
         betterGamepad.update();
 
         if (betterGamepad.left_trigger.pressed) direction = !direction;
+
+        if(betterGamepad.right_trigger.pressed) {
+            robot.leftJack.setPosition(leftJackUp);
+            robot.rightJack.setPosition(rightJackUp);
+        }
 
         if (direction) {
             robot.collector.setDirection(DcMotorEx.Direction.REVERSE);

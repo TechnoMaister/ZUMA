@@ -10,6 +10,8 @@ public class RobotConstants {
     collectorReverse = -.1,
     blockerBlockedPos = .6,
     blockerOpenPos = .38,
+    leftJackUp = .5,
+    rightJackUp = .5,
     vMax = 2800,
     minMult = .8,
     midMult = .85,
