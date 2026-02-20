@@ -1,26 +1,24 @@
 package org.firstinspires.ftc.teamcode.auto;
 
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.backCollectT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockerBlockedPos;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockerOpenPos;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.collect1CtrPoseL;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.collect2CtrPoseL;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.collect3CtrPoseL;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.collectT;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.collectorReverse;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.distance;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.dx;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.dy;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.goalX;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.goalY;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.parkPose1;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.robotPose;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.scoreMult1;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.scoreMult2;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.scoreMult3;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootPoseC;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootPoseC2;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootPoseL;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootT1;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootT2;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.startPoseL;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.vMax;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.team;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
@@ -45,9 +43,9 @@ public class RedL extends OpMode {
     public Follower follower;
     public Timer pathTimer, actionTimer, opmodeTimer;
     public Pose
-    startPose, shootPose1, shootPose2, shootPose3,
+    startPose, shootPose1, shootPose2,
     collect1Pose, collect1CtrPose, collect2Pose,
-    collect2CtrPose, collect3Pose, collect3CtrPose, parkPose;
+    collect2CtrPose, collect3Pose, collect3CtrPose, parkPose, score2CtrPose;
     public Path scorePreload;
     public PathChain grab1, score1, grab2, score2, grab3, score3, park1, park2;
     public Hardware robot;
@@ -55,10 +53,9 @@ public class RedL extends OpMode {
 
     @Override
     public void init() {
-        startPose = startPoseL .mirror();
+        startPose = startPoseL.mirror();
         shootPose1 = shootPoseL.mirror();
         shootPose2 = shootPoseC.mirror();
-        shootPose3 = shootPoseC2.mirror();
         collect1Pose = RobotConstants.collect1Pose.mirror();
         collect1CtrPose = collect1CtrPoseL.mirror();
         collect2Pose = RobotConstants.collect2Pose.mirror();
@@ -66,8 +63,9 @@ public class RedL extends OpMode {
         collect3Pose = RobotConstants.collect3Pose.mirror();
         collect3CtrPose = collect3CtrPoseL.mirror();
         parkPose = parkPose1.mirror();
+        score2CtrPose = RobotConstants.score2CtrPose.mirror();
 
-        team = true;
+        goalX = 131;
 
         pathTimer = new Timer();
         actionTimer = new Timer();
@@ -98,7 +96,7 @@ public class RedL extends OpMode {
                 .build();
 
         score2 = follower.pathBuilder()
-                .addPath(new BezierLine(collect2Pose, shootPose2))
+                .addPath(new BezierCurve(collect2Pose, score2CtrPose, shootPose2))
                 .setLinearHeadingInterpolation(collect2Pose.getHeading(), shootPose2.getHeading())
                 .build();
 
@@ -108,13 +106,13 @@ public class RedL extends OpMode {
                 .build();
 
         score3 = follower.pathBuilder()
-                .addPath(new BezierLine(collect3Pose, shootPose3))
-                .setLinearHeadingInterpolation(collect3Pose.getHeading(), shootPose3.getHeading())
+                .addPath(new BezierLine(collect3Pose, shootPose2))
+                .setLinearHeadingInterpolation(collect3Pose.getHeading(), shootPose2.getHeading())
                 .build();
 
         park1 = follower.pathBuilder()
-                .addPath(new BezierLine(shootPose3, parkPose))
-                .setLinearHeadingInterpolation(shootPose3.getHeading(), parkPose.getHeading())
+                .addPath(new BezierLine(shootPose2, parkPose))
+                .setLinearHeadingInterpolation(shootPose2.getHeading(), parkPose.getHeading())
                 .build();
 
         park2 = follower.pathBuilder()
@@ -131,7 +129,7 @@ public class RedL extends OpMode {
                 break;
             case 1:
                 if (!follower.isBusy()) {
-                    if (actionTimer.getElapsedTime() <= shootT1) score(scoreMult1);
+                    if (actionTimer.getElapsedTime() <= shootT1) shoot(shootMult(distance));
                     else if(actionTimer.getElapsedTime() <= shootT2) {
                         collect();
                         open();
@@ -154,7 +152,7 @@ public class RedL extends OpMode {
                 break;
             case 3:
                 if (!follower.isBusy()) {
-                    if (actionTimer.getElapsedTime() <= shootT1) score(scoreMult1);
+                    if (actionTimer.getElapsedTime() <= shootT1) shoot(shootMult(distance));
                     else if(actionTimer.getElapsedTime() <= shootT2) {
                         collect();
                         open();
@@ -177,7 +175,7 @@ public class RedL extends OpMode {
                 break;
             case 5:
                 if (!follower.isBusy()) {
-                    if (actionTimer.getElapsedTime() <= shootT1) score(scoreMult2);
+                    if (actionTimer.getElapsedTime() <= shootT1) shoot(shootMult(distance));
                     else if(actionTimer.getElapsedTime() <= shootT2) {
                         collect();
                         open();
@@ -200,7 +198,7 @@ public class RedL extends OpMode {
                 break;
             case 7:
                 if (!follower.isBusy()) {
-                    if (actionTimer.getElapsedTime() <= shootT1) score(scoreMult3);
+                    if (actionTimer.getElapsedTime() <= shootT1) shoot(shootMult(distance));
                     else if(actionTimer.getElapsedTime() <= shootT2) {
                         collect();
                         open();
@@ -233,6 +231,8 @@ public class RedL extends OpMode {
         autonomousPathUpdate();
 
         robotPose = follower.getPose();
+        dx = goalX - follower.getPose().getX(); dy = goalY - follower.getPose().getY();
+        distance = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
 
         telemetry.addData("path state", pathState);
         telemetry.addData("x", follower.getPose().getX());
@@ -243,12 +243,7 @@ public class RedL extends OpMode {
     }
 
     public void shoot(double multiplier){
-        for (DcMotorEx shooter : robot.shooters) shooter.setVelocity(MathFunctions.clamp(multiplier, .01, 1) * vMax);
-    }
-
-    public void score(double scoreMult) {
-        shoot(scoreMult);
-        if(actionTimer.getElapsedTime() >= backCollectT) backCollect();
+        for (DcMotorEx shooter : robot.shooters) shooter.setVelocity(multiplier * vMax);
     }
 
     public void stopShoot() {
@@ -267,10 +262,6 @@ public class RedL extends OpMode {
         robot.collector.setVelocity(vMax);
     }
 
-    public void backCollect() {
-        robot.collector.setPower(collectorReverse);
-    }
-
     public void stopCollect() {
         robot.collector.setVelocity(0);
     }
@@ -279,5 +270,9 @@ public class RedL extends OpMode {
         stopShoot();
         stopCollect();
         block();
+    }
+
+    public double shootMult(double distance) {
+        return MathFunctions.clamp(-3.28801*Math.pow(10, -7)*Math.pow(distance, 3) + 0.000115734*Math.pow(distance, 2) - 0.0123207*distance + 1.13939, .725, .79);
     }
 }

@@ -3,21 +3,21 @@ package org.firstinspires.ftc.teamcode.teleOp;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockerBlockedPos;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockerOpenPos;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.blueX;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.collectorReverse;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.dMax;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.dMid;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.distance;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.dx;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.dy;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.errorH;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.errorX;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.errorY;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.goalX;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.goalY;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.leftJackDown;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.leftJackUp;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.maxMult;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.midMult;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.minMult;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.redX;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.rightJackDown;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.rightJackUp;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.rumblingT;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.slow;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.robotPose;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.team;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.vMax;
 
 import com.pedropathing.follower.Follower;
@@ -40,23 +40,22 @@ public class Drive extends OpMode {
     public Follower follower;
     public BetterGamepad betterGamepad;
     public Timer rumbling, rumbling2, block;
-    public double shootMult, speed, speedR, targetHeading, headingError, rotCmd, goalX, distance;
-    public boolean direction;
+    public double angle, lastX, lastY;
+    public boolean direction, shoot, jack;
 
     @Override
     public void init() {
         robot = new Hardware(hardwareMap);
 
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(robotPose);
+        follower.setStartingPose(robotPose == null ? new Pose(72, 72, Math.toRadians(90)) : robotPose);
         follower.update();
 
         rumbling = new Timer();
         rumbling2 = new Timer();
         block = new Timer();
 
-        if(team) goalX = redX;
-        else goalX = blueX;
+        if(goalX == 0) goalX = 12;
 
         betterGamepad = new BetterGamepad(gamepad1);
     }
@@ -70,11 +69,15 @@ public class Drive extends OpMode {
     public void loop() {
         betterGamepad.update();
 
-        if (betterGamepad.left_trigger.pressed) direction = !direction;
+        if(betterGamepad.left_trigger.pressed) direction = !direction;
+        if(betterGamepad.right_trigger.pressed) jack = !jack;
 
-        if(betterGamepad.right_trigger.pressed) {
+        if(jack) {
             robot.leftJack.setPosition(leftJackUp);
             robot.rightJack.setPosition(rightJackUp);
+        } else {
+            robot.leftJack.setPosition(leftJackDown);
+            robot.rightJack.setPosition(rightJackDown);
         }
 
         if (direction) {
@@ -93,43 +96,64 @@ public class Drive extends OpMode {
             rumbling.resetTimer();
         }
 
-        distance = distanceToGoal(follower.getPose());
-        if(distance < dMid) shootMult = minMult;
-        else if(distance >= dMid && distance <= dMax) shootMult = midMult;
-        else shootMult = maxMult;
+        dx = goalX - follower.getPose().getX(); dy = goalY - follower.getPose().getY();
 
-        targetHeading = headingToGoal(follower.getPose());
-        headingError = angleWrap(targetHeading - follower.getPose().getHeading());
-        rotCmd = Math.copySign(Math.min(Math.abs(headingError) / Math.PI, 1.0), headingError);
+        distance = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
 
-        if(betterGamepad.right_bumper.held) {
-            follower.holdPoint(new Pose(follower.getPose().getX(), follower.getPose().getY(), rotCmd));
-            shoot(shootMult);
+        angle = Math.atan2(dy, dx);
+        if(goalX == 131) angle -= Math.toRadians(angleError(distance));
+        else angle += Math.toRadians(angleError(distance));
+        if(angle < 0) angle += 2*Math.PI;
+
+        if(betterGamepad.right_bumper.pressed && !shoot && ((distance >= 60 && distance <= 90) || distance >= 120)) shoot = true;
+        else if(betterGamepad.right_bumper.pressed) {
+            follower.startTeleopDrive(true);
+            shoot = false;
+        }
+
+        if(shoot) {
+            follower.holdPoint(new Pose(lastX, lastY, angle));
+            if(follower.getPose().getX() >= lastX-errorX && follower.getPose().getX() <= lastX+errorX &&
+                follower.getPose().getY() >= lastY-errorY && follower.getPose().getY() <= lastY+errorY &&
+                follower.getPose().getHeading() >= angle-Math.toRadians(errorH) && follower.getPose().getHeading() <= angle+Math.toRadians(errorH)) shoot(shootMult(distance));
+            else {
+                for(DcMotorEx shooter : robot.shooters) shooter.setVelocity(0);
+                for (Servo blocker : robot.blockers) blocker.setPosition(blockerBlockedPos);
+                robot.collector.setVelocity(0);
+            }
         } else {
             drive(gamepad1);
             for(DcMotorEx shooter : robot.shooters) shooter.setVelocity(0);
             for (Servo blocker : robot.blockers) blocker.setPosition(blockerBlockedPos);
             if (betterGamepad.left_bumper.held) robot.collector.setVelocity(vMax);
             else robot.collector.setVelocity(0);
+            lastX = follower.getPose().getX();
+            lastY = follower.getPose().getY();
             block.resetTimer();
         }
+
+        follower.update();
+
+        telemetry.addData("robot X", follower.getPose().getX());
+        telemetry.addData("robot Y", follower.getPose().getY());
+        telemetry.addData("robot H", Math.toDegrees(follower.getPose().getHeading()));
+        telemetry.addData("theta", Math.toDegrees(angle));
+        telemetry.addData("distance", distance);
     }
 
     public void drive(Gamepad gamepad){
-        if(betterGamepad.left_joystick_button.held) speed = slow;
-        else speed = 1;
-
-        if(betterGamepad.right_joystick_button.held) speedR = slow;
-        else speedR = 1;
-
-        follower.setTeleOpDrive(
-                -gamepad.left_stick_y*speed,
-                -gamepad.left_stick_x*speed,
-                -gamepad.right_stick_x*speedR,
+        if(goalX == 131) follower.setTeleOpDrive(
+                -gamepad.left_stick_y,
+                -gamepad.left_stick_x,
+                -gamepad.right_stick_x,
                 false
         );
-
-        follower.update();
+        else follower.setTeleOpDrive(
+                gamepad.left_stick_y,
+                gamepad.left_stick_x,
+                -gamepad.right_stick_x,
+                false
+        );
     }
 
     public void shoot(double multiplier) {
@@ -140,9 +164,11 @@ public class Drive extends OpMode {
         else robot.collector.setPower(collectorReverse);
     }
 
-    public double angleWrap(double angle) { while (angle > Math.PI) angle -= 2 * Math.PI; while (angle < -Math.PI) angle += 2 * Math.PI; return angle; }
+    public double angleError(double distance) {
+        return MathFunctions.clamp(4.83415*Math.pow(10, -7) * Math.pow(distance, 4) - 0.000184899 * Math.pow(distance, 3) + 0.0251689*Math.pow(distance, 2) - 1.4605*distance + 40.69425, 6, 12);
+    }
 
-    public double headingToGoal(Pose pose) { double dx = goalX - pose.getPose().getX(); double dy = goalY - pose.getPose().getY(); return Math.atan2(dy, dx); }
-
-    public double distanceToGoal(Pose pose) { double dx = goalX - pose.getPose().getX(); double dy = goalY - pose.getPose().getY(); return Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2)); }
+    public double shootMult(double distance) {
+        return MathFunctions.clamp(-3.28801*Math.pow(10, -7)*Math.pow(distance, 3) + 0.000115734*Math.pow(distance, 2) - 0.0123207*distance + 1.13939, .725, .79);
+    }
 }
