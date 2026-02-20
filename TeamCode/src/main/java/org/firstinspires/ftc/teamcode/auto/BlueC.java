@@ -9,6 +9,7 @@ import static org.firstinspires.ftc.teamcode.util.RobotConstants.collectT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.distance;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.dx;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.dy;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.errorC;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.goalX;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.goalY;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.parkPose1;
@@ -154,7 +155,7 @@ public class BlueC extends OpMode {
                 break;
             case 3:
                 if (!follower.isBusy()) {
-                    if (actionTimer.getElapsedTime() <= shootT1) shoot(shootMult(distance)-.02);
+                    if (actionTimer.getElapsedTime() <= shootT1) shoot(shootMult(distance)+errorC);
                     else if(actionTimer.getElapsedTime() <= shootT2) {
                         collect();
                         open();
@@ -177,7 +178,7 @@ public class BlueC extends OpMode {
                 break;
             case 5:
                 if (!follower.isBusy()) {
-                    if (actionTimer.getElapsedTime() <= shootT1) shoot(shootMult(distance)-.02);
+                    if (actionTimer.getElapsedTime() <= shootT1) shoot(shootMult(distance)+errorC);
                     else if(actionTimer.getElapsedTime() <= shootT2) {
                         collect();
                         open();
@@ -200,7 +201,7 @@ public class BlueC extends OpMode {
                 break;
             case 7:
                 if (!follower.isBusy()) {
-                    if (actionTimer.getElapsedTime() <= shootT1) shoot(shootMult(distance)-.02);
+                    if (actionTimer.getElapsedTime() <= shootT1) shoot(shootMult(distance)+errorC);
                     else if(actionTimer.getElapsedTime() <= shootT2) {
                         collect();
                         open();

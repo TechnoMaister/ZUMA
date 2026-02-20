@@ -26,8 +26,8 @@ public class Hardware {
         leftBlocker = hardwareMap.get(Servo.class, "leftBlocker");
         rightBlocker = hardwareMap.get(Servo.class, "rightBlocker");
 
-        rightJack = hardwareMap.get(Servo.class, "rightJack");
         leftJack = hardwareMap.get(Servo.class, "leftJack");
+        rightJack = hardwareMap.get(Servo.class, "rightJack");
 
         leftShoot.setDirection(DcMotorEx.Direction.REVERSE);
 

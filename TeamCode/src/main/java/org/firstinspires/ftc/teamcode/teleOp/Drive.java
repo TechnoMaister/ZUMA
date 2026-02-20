@@ -97,7 +97,6 @@ public class Drive extends OpMode {
         }
 
         dx = goalX - follower.getPose().getX(); dy = goalY - follower.getPose().getY();
-
         distance = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
 
         angle = Math.atan2(dy, dx);
@@ -137,7 +136,7 @@ public class Drive extends OpMode {
         telemetry.addData("robot X", follower.getPose().getX());
         telemetry.addData("robot Y", follower.getPose().getY());
         telemetry.addData("robot H", Math.toDegrees(follower.getPose().getHeading()));
-        telemetry.addData("theta", Math.toDegrees(angle));
+        telemetry.addData("angle", Math.toDegrees(angle));
         telemetry.addData("distance", distance);
     }
 

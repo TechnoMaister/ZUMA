@@ -23,6 +23,7 @@ public class RobotConstants {
     errorX = 2,
     errorY = 2,
     errorH = 10,
+    errorC = -.02,
     goalY = 137,
     goalX,
     distance,
