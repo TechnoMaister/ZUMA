@@ -12,10 +12,8 @@ import static org.firstinspires.ftc.teamcode.util.RobotConstants.errorX;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.errorY;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.goalX;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.goalY;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.leftJackDown;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.leftJackUp;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.rightJackDown;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.rightJackUp;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.jackDownPos;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.jackUpPos;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.rumblingT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.robotPose;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.vMax;
@@ -72,13 +70,8 @@ public class Drive extends OpMode {
         if(betterGamepad.left_trigger.pressed) direction = !direction;
         if(betterGamepad.right_trigger.pressed) jack = !jack;
 
-        if(jack) {
-            robot.leftJack.setPosition(leftJackUp);
-            robot.rightJack.setPosition(rightJackUp);
-        } else {
-            robot.leftJack.setPosition(leftJackDown);
-            robot.rightJack.setPosition(rightJackDown);
-        }
+        if(jack) for(Servo jack : robot.blockers) jack.setPosition(jackUpPos);
+        else for(Servo jack : robot.blockers) jack.setPosition(jackDownPos);
 
         if (direction) {
             robot.collector.setDirection(DcMotorEx.Direction.REVERSE);
