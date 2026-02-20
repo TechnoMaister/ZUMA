@@ -13,6 +13,7 @@ import static org.firstinspires.ftc.teamcode.util.RobotConstants.goalX;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.goalY;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.parkPose1;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.robotPose;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootDelay;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootPoseC;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootPoseL;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootT1;
@@ -129,16 +130,17 @@ public class BlueL extends OpMode {
                 break;
             case 1:
                 if (!follower.isBusy()) {
-                    if (actionTimer.getElapsedTime() <= shootT1) shoot(shootMult(distance));
-                    else if(actionTimer.getElapsedTime() <= shootT2) {
-                        collect();
-                        open();
-                    } else {
-                        stopShoot();
-                        block();
-                        follower.followPath(grab1, true);
-                        setPathState(2);
-                    }
+                    if(actionTimer.getElapsedTime() >= shootDelay)
+                        if (actionTimer.getElapsedTime() <= shootT1) shoot(shootMult(distance));
+                        else if(actionTimer.getElapsedTime() <= shootT2) {
+                            collect();
+                            open();
+                        } else {
+                            stopShoot();
+                            block();
+                            follower.followPath(grab1, true);
+                            setPathState(2);
+                        }
                 } else actionTimer.resetTimer();
                 break;
             case 2:
@@ -152,16 +154,17 @@ public class BlueL extends OpMode {
                 break;
             case 3:
                 if (!follower.isBusy()) {
-                    if (actionTimer.getElapsedTime() <= shootT1) shoot(shootMult(distance));
-                    else if(actionTimer.getElapsedTime() <= shootT2) {
-                        collect();
-                        open();
-                    } else {
-                        stopShoot();
-                        block();
-                        follower.followPath(grab2, true);
-                        setPathState(4);
-                    }
+                    if(actionTimer.getElapsedTime() >= shootDelay)
+                        if (actionTimer.getElapsedTime() <= shootT1) shoot(shootMult(distance));
+                        else if(actionTimer.getElapsedTime() <= shootT2) {
+                            collect();
+                            open();
+                        } else {
+                            stopShoot();
+                            block();
+                            follower.followPath(grab2, true);
+                            setPathState(4);
+                        }
                 } else actionTimer.resetTimer();
                 break;
             case 4:
@@ -175,16 +178,17 @@ public class BlueL extends OpMode {
                 break;
             case 5:
                 if (!follower.isBusy()) {
-                    if (actionTimer.getElapsedTime() <= shootT1) shoot(shootMult(distance));
-                    else if(actionTimer.getElapsedTime() <= shootT2) {
-                        collect();
-                        open();
-                    } else {
-                        stopShoot();
-                        block();
-                        follower.followPath(grab3, true);
-                        setPathState(6);
-                    }
+                    if(actionTimer.getElapsedTime() >= shootDelay)
+                        if (actionTimer.getElapsedTime() <= shootT1) shoot(shootMult(distance));
+                        else if(actionTimer.getElapsedTime() <= shootT2) {
+                            collect();
+                            open();
+                        } else {
+                            stopShoot();
+                            block();
+                            follower.followPath(grab3, true);
+                            setPathState(6);
+                        }
                 } else actionTimer.resetTimer();
                 break;
             case 6:
@@ -198,15 +202,16 @@ public class BlueL extends OpMode {
                 break;
             case 7:
                 if (!follower.isBusy()) {
-                    if (actionTimer.getElapsedTime() <= shootT1) shoot(shootMult(distance));
-                    else if(actionTimer.getElapsedTime() <= shootT2) {
-                        collect();
-                        open();
-                    } else {
-                        stopEverything();
-                        follower.followPath(park1, true);
-                        setPathState(8);
-                    }
+                    if(actionTimer.getElapsedTime() >= shootDelay)
+                        if (actionTimer.getElapsedTime() <= shootT1) shoot(shootMult(distance));
+                        else if(actionTimer.getElapsedTime() <= shootT2) {
+                            collect();
+                            open();
+                        } else {
+                            stopEverything();
+                            follower.followPath(park1, true);
+                            setPathState(8);
+                        }
                 } else actionTimer.resetTimer();
                 break;
             case 8:
