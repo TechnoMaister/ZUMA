@@ -61,10 +61,10 @@ public class BlueL extends OpMode {
         collect1CtrPose = collect1CtrPoseL;
         collect2Pose = RobotConstants.collect2Pose;
         collect2CtrPose = collect2CtrPoseL;
+        score2CtrPose = RobotConstants.score2CtrPose;
         collect3Pose = RobotConstants.collect3Pose;
         collect3CtrPose = collect3CtrPoseL;
         parkPose = parkPose1;
-        score2CtrPose = RobotConstants.score2CtrPose;
 
         goalX = 12;
 

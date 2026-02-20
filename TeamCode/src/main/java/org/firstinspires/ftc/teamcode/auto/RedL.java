@@ -61,10 +61,10 @@ public class RedL extends OpMode {
         collect1CtrPose = collect1CtrPoseL.mirror();
         collect2Pose = RobotConstants.collect2Pose.mirror();
         collect2CtrPose = collect2CtrPoseL.mirror();
+        score2CtrPose = RobotConstants.score2CtrPose.mirror();
         collect3Pose = RobotConstants.collect3Pose.mirror();
         collect3CtrPose = collect3CtrPoseL.mirror();
         parkPose = parkPose1.mirror();
-        score2CtrPose = RobotConstants.score2CtrPose.mirror();
 
         goalX = 131;
 

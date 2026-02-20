@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.auto;
 
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockerBlockedPos;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockerOpenPos;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.collect1CtrPoseL;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.collect1CtrPoseC;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.collect2CtrPoseC;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.collect3CtrPoseC;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.collectT;
@@ -16,7 +16,6 @@ import static org.firstinspires.ftc.teamcode.util.RobotConstants.parkPose1;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.robotPose;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootDelay;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootPoseC;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootPoseLC;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootT1;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootT2;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.startPoseC;
@@ -45,10 +44,9 @@ public class BlueC extends OpMode {
     public Follower follower;
     public Timer pathTimer, actionTimer, opmodeTimer;
     public Pose
-    startPose, shootPose1, shootPose2,
-    collect1Pose, collect1CtrPose, collect2Pose,
-    collect2CtrPose, collect3Pose, collect3CtrPose,
-    parkPose, shootCtrPose, collect1CtrPose2;
+    startPose, shootPose, collect1Pose, collect1CtrPose,
+    collect2Pose, collect2CtrPose, collect3Pose,
+    collect3CtrPose, parkPose, collect1CtrPose2;
     public Path scorePreload;
     public PathChain grab1, score1, grab2, score2, grab3, score3, park1, park2;
     public Hardware robot;
@@ -57,17 +55,14 @@ public class BlueC extends OpMode {
     @Override
     public void init() {
         startPose = startPoseC;
-        shootPose1 = shootPoseLC;
-        shootPose2 = shootPoseC;
-        shootCtrPose = RobotConstants.shootCtrPose;
+        shootPose = shootPoseC;
         collect1Pose = RobotConstants.collect1Pose;
-        collect1CtrPose = collect1CtrPoseL;
+        collect1CtrPose = collect1CtrPoseC;
         collect2Pose = RobotConstants.collect2Pose;
         collect2CtrPose = collect2CtrPoseC;
         collect3Pose = RobotConstants.collect3Pose;
         collect3CtrPose = collect3CtrPoseC;
         parkPose = parkPose1;
-        collect1CtrPose2 = collect1CtrPoseL;
 
         goalX = 12;
 
@@ -81,47 +76,47 @@ public class BlueC extends OpMode {
     }
 
     public void buildPaths() {
-        scorePreload = new Path(new BezierLine(startPose, shootPose2));
-        scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), shootPose2.getHeading());
+        scorePreload = new Path(new BezierLine(startPose, shootPose));
+        scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), shootPose.getHeading());
 
         grab1 = follower.pathBuilder()
-                .addPath(new BezierCurve(shootPose2, collect3CtrPose, collect3Pose))
+                .addPath(new BezierCurve(shootPose, collect3CtrPose, collect3Pose))
                 .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
 
         score1 = follower.pathBuilder()
-                .addPath(new BezierLine(collect3Pose, shootPose2))
-                .setLinearHeadingInterpolation(collect3Pose.getHeading(), shootPose2.getHeading())
+                .addPath(new BezierLine(collect3Pose, shootPose))
+                .setLinearHeadingInterpolation(collect3Pose.getHeading(), shootPose.getHeading())
                 .build();
 
         grab2 = follower.pathBuilder()
-                .addPath(new BezierCurve(shootPose2, collect2CtrPose, collect2Pose))
+                .addPath(new BezierCurve(shootPose, collect2CtrPose, collect2Pose))
                 .setConstantHeadingInterpolation(collect2Pose.getHeading())
                 .build();
 
         score2 = follower.pathBuilder()
-                .addPath(new BezierCurve(collect2Pose, shootCtrPose,shootPose1))
-                .setLinearHeadingInterpolation(collect2Pose.getHeading(), shootPose1.getHeading())
+                .addPath(new BezierLine(collect2Pose, shootPose))
+                .setLinearHeadingInterpolation(collect2Pose.getHeading(), shootPose.getHeading())
                 .build();
 
         grab3 = follower.pathBuilder()
-                .addPath(new BezierCurve(shootPose1, collect1CtrPose2, collect1Pose))
+                .addPath(new BezierCurve(shootPose, collect1CtrPose2, collect1Pose))
                 .setConstantHeadingInterpolation(collect1Pose.getHeading())
                 .build();
 
         score3 = follower.pathBuilder()
-                .addPath(new BezierLine(collect1Pose, shootPose1))
-                .setLinearHeadingInterpolation(collect1Pose.getHeading(), shootPose1.getHeading())
+                .addPath(new BezierLine(collect1Pose, shootPose))
+                .setLinearHeadingInterpolation(collect1Pose.getHeading(), shootPose.getHeading())
                 .build();
 
         park1 = follower.pathBuilder()
-                .addPath(new BezierLine(shootPose1, parkPose))
-                .setLinearHeadingInterpolation(shootPose1.getHeading(), parkPose.getHeading())
+                .addPath(new BezierLine(shootPose, parkPose))
+                .setLinearHeadingInterpolation(shootPose.getHeading(), parkPose.getHeading())
                 .build();
 
         park2 = follower.pathBuilder()
-                .addPath(new BezierLine(shootPose1, parkPose))
-                .setLinearHeadingInterpolation(shootPose1.getHeading(), parkPose.getHeading())
+                .addPath(new BezierLine(shootPose, parkPose))
+                .setLinearHeadingInterpolation(shootPose.getHeading(), parkPose.getHeading())
                 .build();
     }
 
