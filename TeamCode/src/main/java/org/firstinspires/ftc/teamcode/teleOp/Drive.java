@@ -116,9 +116,10 @@ public class Drive extends OpMode {
                 follower.getPose().getY() >= lastY-errorY && follower.getPose().getY() <= lastY+errorY &&
                 follower.getPose().getHeading() >= angle-Math.toRadians(errorH) && follower.getPose().getHeading() <= angle+Math.toRadians(errorH)) shoot(shootMult(distance));
             else {
-                for(DcMotorEx shooter : robot.shooters) shooter.setVelocity(0);
+                for (DcMotorEx shooter : robot.shooters) shooter.setVelocity(0);
                 for (Servo blocker : robot.blockers) blocker.setPosition(blockerBlockedPos);
-                robot.collector.setVelocity(0);
+                robot.collector.setVelocity(vMax);
+                block.resetTimer();
             }
         } else {
             drive(gamepad1);
