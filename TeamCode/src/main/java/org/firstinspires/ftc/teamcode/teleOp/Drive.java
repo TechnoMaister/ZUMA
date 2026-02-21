@@ -164,7 +164,7 @@ public class Drive extends OpMode {
         if(reset){
             if (goalX == 132) {
                 if (betterGamepad.triangle.pressed) {
-                    follower.setPose(new Pose(8, 8, Math.toRadians(0)));
+                    follower.setPose(new Pose(7.955, 8.66, Math.toRadians(0)));
                     reset = false;
                 }
                 else if (betterGamepad.circle.pressed) {
@@ -173,7 +173,7 @@ public class Drive extends OpMode {
                 }
             } else {
                 if (betterGamepad.triangle.pressed) {
-                    follower.setPose(new Pose(136, 8, Math.toRadians(180)));
+                    follower.setPose(new Pose(136.045, 8.66, Math.toRadians(180)));
                     reset = false;
                 }
                 else if (betterGamepad.circle.pressed) {
@@ -227,13 +227,13 @@ public class Drive extends OpMode {
 
     public ShootingZone canShoot(Pose robot) {
 
-        double halfL = 8, halfl = 8, xc = robot.getPose().getX(), yc = robot.getPose().getY(), eps = 1e-6;
+        double halfL = 8.66, halfl = 7.955, xc = robot.getPose().getX(), yc = robot.getPose().getY(), eps = 1e-6;
 
         Pose[] corners = {
-                new Pose(xc - halfL, yc - halfl),
-                new Pose(xc + halfL, yc - halfl),
-                new Pose(xc + halfL, yc + halfl),
-                new Pose(xc - halfL, yc + halfl)
+                new Pose(xc - halfl, yc - halfL),
+                new Pose(xc + halfl, yc - halfL),
+                new Pose(xc + halfl, yc + halfL),
+                new Pose(xc - halfl, yc + halfL)
         };
 
         boolean inTop = false, inBottom = false;

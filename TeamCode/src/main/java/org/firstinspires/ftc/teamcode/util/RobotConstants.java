@@ -47,8 +47,8 @@ public class RobotConstants {
 
     public static Pose
 
-    startPoseL = new Pose(56, 8, Math.toRadians(90)),
-    startPoseC = new Pose(17.7, 118.8, Math.toRadians(143)),
+    startPoseL = new Pose(56, 8.66, Math.toRadians(90)),
+    startPoseC = new Pose(18.167, 119.267, Math.toRadians(144)),
     shootPoseL = new Pose(56, 11, Math.toRadians(111)),
     shootPoseC = new Pose(50, 88, Math.toRadians(130)),
     collect1Pose = new Pose(13, 35, Math.toRadians(0)),
