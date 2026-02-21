@@ -22,10 +22,10 @@ public class RobotConstants {
     errorX = 2,
     errorY = 2,
     errorH = 10,
-    shootC = .66,
+    shootC = 725,
     shootL = .77,
-    goalY = 137,
-    goalX, // B = 12, R = 131
+    goalY = 135.67,
+    goalX, // B = 12, R = 132
     distance,
     dx,
     dy,

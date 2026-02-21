@@ -67,7 +67,7 @@ public class RedL extends OpMode {
         collect3CtrPose = collect3CtrPoseL.mirror();
         parkPose = parkPose1.mirror();
 
-        goalX = 131;
+        goalX = 132;
         gamepad1.setLedColor(1, 0, 0, Gamepad.LED_DURATION_CONTINUOUS);
 
         pathTimer = new Timer();

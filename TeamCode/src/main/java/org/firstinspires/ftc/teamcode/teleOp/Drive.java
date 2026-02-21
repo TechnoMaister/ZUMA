@@ -45,7 +45,7 @@ public class Drive extends OpMode {
     public BetterGamepad betterGamepad;
     public Timer rumbling, rumbling2, block;
     public double angle, lastX, lastY;
-    public boolean shoot, jack, tuning;
+    public boolean shoot, jack, tuning, reset;
     public enum ShootingZone {
         NONE,
         CLOSE,
@@ -57,7 +57,7 @@ public class Drive extends OpMode {
         robot = new Hardware(hardwareMap);
 
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(robotPose == null ? new Pose(72, 72, Math.toRadians(90)) : robotPose);
+        follower.setStartingPose(robotPose == null ? new Pose(136, 8, Math.toRadians(180)) : robotPose);
         follower.update();
 
         rumbling = new Timer();
@@ -83,6 +83,7 @@ public class Drive extends OpMode {
 
         if(betterGamepad.right_trigger.pressed) jack = !jack;
         if(betterGamepad.cross.pressed) tuning = !tuning;
+        if(betterGamepad.touchpad.pressed) reset = !reset;
 
         if(jack) for(Servo jack : robot.blockers) jack.setPosition(jackUpPos);
         else for(Servo jack : robot.blockers) jack.setPosition(jackDownPos);
@@ -126,13 +127,8 @@ public class Drive extends OpMode {
         distance = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
 
         angle = Math.atan2(dy, dx);
-        if(goalX == 131) {
-            angle -= Math.toRadians(angleError(distance));
-            angle -= Math.toRadians(angleError);
-        } else {
-            angle += Math.toRadians(angleError(distance));
-            angle += Math.toRadians(angleError);
-        }
+        if(goalX == 132) angle -= Math.toRadians(angleError(distance)+angleError);
+        else angle += Math.toRadians(angleError(distance)+angleError);
         if(angle < 0) angle += 2*Math.PI;
 
         if(betterGamepad.right_bumper.pressed && !shoot && canShoot(follower.getPose()) != ShootingZone.NONE && distance >= 60) shoot = true;
@@ -165,6 +161,28 @@ public class Drive extends OpMode {
             block.resetTimer();
         }
 
+        if(reset){
+            if (goalX == 132) {
+                if (betterGamepad.triangle.pressed) {
+                    follower.setPose(new Pose(8, 8, Math.toRadians(0)));
+                    reset = false;
+                }
+                else if (betterGamepad.circle.pressed) {
+                    follower.setPose(new Pose(follower.getPose().getX(), follower.getPose().getY(), Math.toRadians(0)));
+                    reset = false;
+                }
+            } else {
+                if (betterGamepad.triangle.pressed) {
+                    follower.setPose(new Pose(136, 8, Math.toRadians(180)));
+                    reset = false;
+                }
+                else if (betterGamepad.circle.pressed) {
+                    follower.setPose(new Pose(follower.getPose().getX(), follower.getPose().getY(), Math.toRadians(180)));
+                    reset = false;
+                }
+            }
+        }
+
         follower.update();
 
         telemetry.addData("robot X", follower.getPose().getX());
@@ -177,7 +195,7 @@ public class Drive extends OpMode {
     }
 
     public void drive(Gamepad gamepad){
-        if(goalX == 131) follower.setTeleOpDrive(
+        if(goalX == 132) follower.setTeleOpDrive(
                 -gamepad.left_stick_y,
                 -gamepad.left_stick_x,
                 -gamepad.right_stick_x,
@@ -209,7 +227,7 @@ public class Drive extends OpMode {
 
     public ShootingZone canShoot(Pose robot) {
 
-        double halfL = 3.94, halfl = 3.54, xc = robot.getPose().getX(), yc = robot.getPose().getY(), eps = 1e-6;
+        double halfL = 8, halfl = 8, xc = robot.getPose().getX(), yc = robot.getPose().getY(), eps = 1e-6;
 
         Pose[] corners = {
                 new Pose(xc - halfL, yc - halfl),
