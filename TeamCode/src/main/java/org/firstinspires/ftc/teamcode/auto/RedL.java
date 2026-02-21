@@ -14,6 +14,7 @@ import static org.firstinspires.ftc.teamcode.util.RobotConstants.goalY;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.parkPose1;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.robotPose;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootDelay;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootL;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootPoseC;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootPoseL;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootT1;
@@ -25,13 +26,13 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.math.MathFunctions;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -67,6 +68,7 @@ public class RedL extends OpMode {
         parkPose = parkPose1.mirror();
 
         goalX = 131;
+        gamepad1.setLedColor(1, 0, 0, Gamepad.LED_DURATION_CONTINUOUS);
 
         pathTimer = new Timer();
         actionTimer = new Timer();
@@ -131,7 +133,7 @@ public class RedL extends OpMode {
             case 1:
                 if (!follower.isBusy()) {
                     if(actionTimer.getElapsedTime() >= shootDelay)
-                        if (actionTimer.getElapsedTime() <= shootT1) shoot(shootMult(distance));
+                        if (actionTimer.getElapsedTime() <= shootT1) shoot(shootL);
                         else if(actionTimer.getElapsedTime() <= shootT2) {
                             collect();
                             open();
@@ -155,7 +157,7 @@ public class RedL extends OpMode {
             case 3:
                 if (!follower.isBusy()) {
                     if(actionTimer.getElapsedTime() >= shootDelay)
-                        if (actionTimer.getElapsedTime() <= shootT1) shoot(shootMult(distance));
+                        if (actionTimer.getElapsedTime() <= shootT1) shoot(shootL);
                         else if(actionTimer.getElapsedTime() <= shootT2) {
                             collect();
                             open();
@@ -179,7 +181,7 @@ public class RedL extends OpMode {
             case 5:
                 if (!follower.isBusy()) {
                     if(actionTimer.getElapsedTime() >= shootDelay)
-                        if (actionTimer.getElapsedTime() <= shootT1) shoot(shootMult(distance));
+                        if (actionTimer.getElapsedTime() <= shootT1) shoot(shootL);
                         else if(actionTimer.getElapsedTime() <= shootT2) {
                             collect();
                             open();
@@ -203,7 +205,7 @@ public class RedL extends OpMode {
             case 7:
                 if (!follower.isBusy()) {
                     if(actionTimer.getElapsedTime() >= shootDelay)
-                        if (actionTimer.getElapsedTime() <= shootT1) shoot(shootMult(distance));
+                        if (actionTimer.getElapsedTime() <= shootT1) shoot(shootL);
                         else if(actionTimer.getElapsedTime() <= shootT2) {
                             collect();
                             open();
@@ -275,9 +277,5 @@ public class RedL extends OpMode {
         stopShoot();
         stopCollect();
         block();
-    }
-
-    public double shootMult(double distance) {
-        return MathFunctions.clamp(-3.28801*Math.pow(10, -7)*Math.pow(distance, 3) + 0.000115734*Math.pow(distance, 2) - 0.0123207*distance + 1.13939, .725, .79);
     }
 }
