@@ -6,7 +6,7 @@ import static org.firstinspires.ftc.teamcode.util.RobotConstants.angleErrorF;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockerBlockedPos;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockerOpenPos;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.collectorReverse;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.collectorReverseMult;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.distance;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.dx;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.dy;
@@ -214,7 +214,7 @@ public class Drive extends OpMode {
         for(Servo blocker : robot.blockers) blocker.setPosition(blockerOpenPos);
 
         if(block.getElapsedTime() >= blockT) robot.collector.setVelocity(vMax);
-        else robot.collector.setVelocity(collectorReverse*vMax);
+        else robot.collector.setVelocity(collectorReverseMult*vMax);
     }
 
     public double angleError(double distance) {
