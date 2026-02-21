@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.teleOp;
 
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.angleError;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.angleErrorC;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.angleErrorL;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.angleErrorF;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockerBlockedPos;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockerOpenPos;
@@ -21,7 +21,7 @@ import static org.firstinspires.ftc.teamcode.util.RobotConstants.robotPose;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.rumblingT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootError;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootErrorC;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootErrorL;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootErrorF;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.vMax;
 
 import com.pedropathing.follower.Follower;
@@ -49,7 +49,7 @@ public class Drive extends OpMode {
     public enum ShootingZone {
         NONE,
         CLOSE,
-        LONG
+        FAR
     }
 
     @Override
@@ -101,15 +101,15 @@ public class Drive extends OpMode {
         }
 
         if(tuning && shoot){
-            if(canShoot(follower.getPose()) == ShootingZone.LONG) {
+            if(canShoot(follower.getPose()) == ShootingZone.FAR) {
 
-                if (betterGamepad.dpad_right.pressed && angle <= (2 * Math.PI - Math.toRadians(2))) angleErrorL -= 2;
-                else if (betterGamepad.dpad_left.pressed && angle > Math.toRadians(2)) angleErrorL += 2;
-                angleError = angleErrorL;
+                if (betterGamepad.dpad_right.pressed && angle <= (2 * Math.PI - Math.toRadians(2))) angleErrorF -= 2;
+                else if (betterGamepad.dpad_left.pressed && angle > Math.toRadians(2)) angleErrorF += 2;
+                angleError = angleErrorF;
 
-                if (betterGamepad.dpad_up.pressed && (shootMult(distance) + shootError) <= .98) shootErrorL += .02;
-                else if (betterGamepad.dpad_down.pressed && (shootMult(distance) + shootError) > .02) shootErrorL -= .02;
-                shootError = shootErrorL;
+                if (betterGamepad.dpad_up.pressed && (shootMult(distance) + shootError) <= .98) shootErrorF += .02;
+                else if (betterGamepad.dpad_down.pressed && (shootMult(distance) + shootError) > .02) shootErrorF -= .02;
+                shootError = shootErrorF;
 
             } else {
 
@@ -131,7 +131,7 @@ public class Drive extends OpMode {
         else angle += Math.toRadians(angleError(distance)+angleError);
         if(angle < 0) angle += 2*Math.PI;
 
-        if(betterGamepad.right_bumper.pressed && !shoot && canShoot(follower.getPose()) != ShootingZone.NONE && distance >= 60) shoot = true;
+        if(betterGamepad.right_bumper.pressed && !shoot && canShoot(follower.getPose()) != ShootingZone.NONE && distance >= 59) shoot = true;
         else if(betterGamepad.right_bumper.pressed) {
             follower.startTeleopDrive(true);
             shoot = false;
@@ -164,7 +164,7 @@ public class Drive extends OpMode {
         if(reset){
             if (goalX == 132) {
                 if (betterGamepad.triangle.pressed) {
-                    follower.setPose(new Pose(7.955, 8.66, Math.toRadians(0)));
+                    follower.setPose(new Pose(8.66, 7.955, Math.toRadians(0)));
                     reset = false;
                 }
                 else if (betterGamepad.circle.pressed) {
@@ -173,7 +173,7 @@ public class Drive extends OpMode {
                 }
             } else {
                 if (betterGamepad.triangle.pressed) {
-                    follower.setPose(new Pose(136.045, 8.66, Math.toRadians(180)));
+                    follower.setPose(new Pose(135.34, 7.955, Math.toRadians(180)));
                     reset = false;
                 }
                 else if (betterGamepad.circle.pressed) {
@@ -226,34 +226,53 @@ public class Drive extends OpMode {
     }
 
     public ShootingZone canShoot(Pose robot) {
+        double width = 15.91;
+        double length = 17.32;
+        double xc = robot.getPose().getX();
+        double yc = robot.getPose().getY();
+        double heading = robot.getHeading();
+        double cos = Math.cos(heading);
+        double sin = Math.sin(heading);
 
-        double halfL = 8.66, halfl = 7.955, xc = robot.getPose().getX(), yc = robot.getPose().getY(), eps = 1e-6;
+        double halfW = width / 2;
+        double halfL = length / 2;
 
-        Pose[] corners = {
-                new Pose(xc - halfl, yc - halfL),
-                new Pose(xc + halfl, yc - halfL),
-                new Pose(xc + halfl, yc + halfL),
-                new Pose(xc - halfl, yc + halfL)
+        Pose[] corners = new Pose[4];
+        double[][] offsets = {
+                {-halfW, -halfL}, {halfW, -halfL},
+                {halfW, halfL}, {-halfW, halfL}
         };
 
-        boolean inTop = false, inBottom = false;
-
-        for (Pose corner : corners) {
-            double x = corner.getPose().getX(), y = corner.getPose().getY();
-
-            if (y >= x - eps && y >= 144 - x - eps && y <= 144 + eps) inTop = true;
-
-            if (y >= 0 - eps && y <= x - 49 + eps && y <= -x + 95 + eps) inBottom = true;
+        for (int i = 0; i < 4; i++) {
+            double dx = offsets[i][0];
+            double dy = offsets[i][1];
+            double x = xc + dx * cos - dy * sin;
+            double y = yc + dx * sin + dy * cos;
+            corners[i] = new Pose(x, y);
         }
 
-        if (!inTop)
-            if (yc >= xc - eps && yc >= 144 - xc - eps && yc <= 144 + eps) inTop = true;
+        boolean anyClose = false;
+        boolean anyFar = false;
+        for (Pose corner : corners) {
+            if (isClose(corner)) anyClose = true;
+            if (isFar(corner)) anyFar = true;
+        }
 
-        if (!inBottom)
-            if (yc >= 0 - eps && yc <= xc - 49 + eps && yc <= -xc + 95 + eps) inBottom = true;
+        if (anyClose) return ShootingZone.CLOSE;
+        if (anyFar) return ShootingZone.FAR;
 
-        if (inTop) return ShootingZone.CLOSE;
-        if (inBottom) return ShootingZone.LONG;
         return ShootingZone.NONE;
+    }
+
+    private boolean isClose(Pose p) {
+        double x = p.getPose().getX();
+        double y = p.getPose().getY();
+        return y >= x && y >= 144 - x && y <= 144;
+    }
+
+    private boolean isFar(Pose p) {
+        double x = p.getPose().getX();
+        double y = p.getPose().getY();
+        return y >= 0 && y <= x - 49 && y <= -x + 95;
     }
 }

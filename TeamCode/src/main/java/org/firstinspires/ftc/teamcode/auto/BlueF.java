@@ -2,9 +2,9 @@ package org.firstinspires.ftc.teamcode.auto;
 
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockerBlockedPos;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockerOpenPos;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.collect1CtrPoseL;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.collect2CtrPoseL;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.collect3CtrPoseL;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.collect1CtrPoseF;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.collect2CtrPoseF;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.collect3CtrPoseF;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.collectT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.distance;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.dx;
@@ -15,12 +15,12 @@ import static org.firstinspires.ftc.teamcode.util.RobotConstants.parkPose1;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.robotPose;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootC;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootDelay;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootL;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootF;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootPoseC;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootPoseL;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootPoseF;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootT1;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootT2;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.startPoseL;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.startPoseF;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.vMax;
 
 import com.pedropathing.follower.Follower;
@@ -40,8 +40,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.util.Hardware;
 import org.firstinspires.ftc.teamcode.util.RobotConstants;
 
-@Autonomous(name = "BlueL", group = "Blue")
-public class BlueL extends OpMode {
+@Autonomous(name = "BlueF", group = "Blue")
+public class BlueF extends OpMode {
 
     public Follower follower;
     public Timer pathTimer, actionTimer, opmodeTimer;
@@ -56,16 +56,16 @@ public class BlueL extends OpMode {
 
     @Override
     public void init() {
-        startPose = startPoseL;
-        shootPose1 = shootPoseL;
+        startPose = startPoseF;
+        shootPose1 = shootPoseF;
         shootPose2 = shootPoseC;
         collect1Pose = RobotConstants.collect1Pose;
-        collect1CtrPose = collect1CtrPoseL;
+        collect1CtrPose = collect1CtrPoseF;
         collect2Pose = RobotConstants.collect2Pose;
-        collect2CtrPose = collect2CtrPoseL;
+        collect2CtrPose = collect2CtrPoseF;
         score2CtrPose = RobotConstants.score2CtrPose;
         collect3Pose = RobotConstants.collect3Pose;
-        collect3CtrPose = collect3CtrPoseL;
+        collect3CtrPose = collect3CtrPoseF;
         parkPose = parkPose1;
 
         goalX = 12;
@@ -134,7 +134,7 @@ public class BlueL extends OpMode {
             case 1:
                 if (!follower.isBusy()) {
                     if(actionTimer.getElapsedTime() >= shootDelay)
-                        if (actionTimer.getElapsedTime() <= shootT1) shoot(shootL);
+                        if (actionTimer.getElapsedTime() <= shootT1) shoot(shootF);
                         else if(actionTimer.getElapsedTime() <= shootT2) {
                             collect();
                             open();
@@ -158,7 +158,7 @@ public class BlueL extends OpMode {
             case 3:
                 if (!follower.isBusy()) {
                     if(actionTimer.getElapsedTime() >= shootDelay)
-                        if (actionTimer.getElapsedTime() <= shootT1) shoot(shootL);
+                        if (actionTimer.getElapsedTime() <= shootT1) shoot(shootF);
                         else if(actionTimer.getElapsedTime() <= shootT2) {
                             collect();
                             open();

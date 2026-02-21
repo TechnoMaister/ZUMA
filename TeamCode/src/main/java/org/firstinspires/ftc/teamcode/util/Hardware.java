@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.util;
 
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.COLLECTOR_PIDF;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.SHOOTER_PIDF;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -43,5 +44,7 @@ public class Hardware {
 
         for (DcMotorEx shooter : shooters)
             shooter.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, SHOOTER_PIDF);
+
+        collector.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, COLLECTOR_PIDF);
     }
 }
