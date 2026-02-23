@@ -34,10 +34,11 @@ public class Hardware {
 
         rightBlocker.setDirection(Servo.Direction.REVERSE);
 
+        rightJack.setDirection(Servo.Direction.REVERSE);
+
         motors = Arrays.asList(leftShoot, rightShoot, collector);
         shooters = Arrays.asList(leftShoot, rightShoot);
         blockers = Arrays.asList(leftBlocker, rightBlocker);
-        jacks = Arrays.asList(leftJack, rightJack);
 
         for (DcMotorEx motor : motors)
             motor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);

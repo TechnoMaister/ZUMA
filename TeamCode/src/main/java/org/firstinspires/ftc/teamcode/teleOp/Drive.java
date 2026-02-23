@@ -15,8 +15,10 @@ import static org.firstinspires.ftc.teamcode.util.RobotConstants.errorX;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.errorY;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.goalX;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.goalY;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.jackDownPos;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.jackUpPos;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.leftJackDownPos;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.leftJackUpPos;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.rightJackDownPos;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.rightJackUpPos;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.robotPose;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.rumblingT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootError;
@@ -85,8 +87,13 @@ public class Drive extends OpMode {
         if(betterGamepad.cross.pressed) tuning = !tuning;
         if(betterGamepad.touchpad.pressed) reset = !reset;
 
-        if(jack) for(Servo jack : robot.blockers) jack.setPosition(jackUpPos);
-        else for(Servo jack : robot.blockers) jack.setPosition(jackDownPos);
+        if(jack) {
+            robot.leftJack.setPosition(leftJackUpPos);
+            robot.rightJack.setPosition(rightJackUpPos);
+        } else {
+            robot.leftJack.setPosition(leftJackDownPos);;
+            robot.rightJack.setPosition(rightJackDownPos);
+        }
 
         if (tuning) {
             if (rumbling.getElapsedTime() <= rumblingT)

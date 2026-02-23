@@ -7,11 +7,13 @@ import com.bylazar.configurables.annotations.Configurable;
 @Configurable
 public class RobotConstants {
     public static double
-            collectorReverseMult = -.1,
+    collectorReverseMult = -.1,
     blockerBlockedPos = .6,
     blockerOpenPos = .38,
-    jackUpPos = .6,
-    jackDownPos = .25,
+    leftJackUpPos = .65,
+    rightJackUpPos = .55,
+    leftJackDownPos,
+    rightJackDownPos,
     vMax = 2800,
     rumblingT = 250,
     blockT = 500,
