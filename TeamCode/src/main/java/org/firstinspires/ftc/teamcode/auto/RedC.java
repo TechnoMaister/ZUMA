@@ -58,6 +58,7 @@ public class RedC extends OpMode {
         shootPose = shootPoseC.mirror();
         collect1Pose = RobotConstants.collect1Pose.mirror();
         collect1CtrPose = collect1CtrPoseC.mirror();
+        collect1CtrPose2 = RobotConstants.collect1CtrPose2C.mirror();
         collect2Pose = RobotConstants.collect2Pose.mirror();
         collect2CtrPose = collect2CtrPoseC.mirror();
         collect3Pose = RobotConstants.collect3Pose.mirror();

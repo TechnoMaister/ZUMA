@@ -14,7 +14,7 @@ public class Hardware {
 
     public DcMotorEx collector, leftShoot, rightShoot;
     public Servo leftBlocker, rightBlocker, leftJack, rightJack;;
-    public List<Servo> blockers, jacks;
+    public List<Servo> blockers;
     public List<DcMotorEx> motors, shooters;
 
     public Hardware(HardwareMap hardwareMap){

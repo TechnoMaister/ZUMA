@@ -58,6 +58,7 @@ public class BlueC extends OpMode {
         shootPose = shootPoseC;
         collect1Pose = RobotConstants.collect1Pose;
         collect1CtrPose = collect1CtrPoseC;
+        collect1CtrPose2 = RobotConstants.collect1CtrPose2C;
         collect2Pose = RobotConstants.collect2Pose;
         collect2CtrPose = collect2CtrPoseC;
         collect3Pose = RobotConstants.collect3Pose;

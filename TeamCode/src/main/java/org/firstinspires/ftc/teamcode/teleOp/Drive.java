@@ -7,6 +7,7 @@ import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockerBlockedPos;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockerOpenPos;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.collectorReverseMult;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.delayT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.distance;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.dx;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.dy;
@@ -24,6 +25,7 @@ import static org.firstinspires.ftc.teamcode.util.RobotConstants.rumblingT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootError;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootErrorC;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootErrorF;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.startPoseF;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.vMax;
 
 import com.pedropathing.follower.Follower;
@@ -45,9 +47,9 @@ public class Drive extends OpMode {
     public Hardware robot;
     public Follower follower;
     public BetterGamepad betterGamepad;
-    public Timer rumbling, rumbling2, block;
+    public Timer rumbling, rumbling2, rumbling3, rumbling4, block, delay;
     public double angle, lastX, lastY;
-    public boolean shoot, jack, tuning, reset;
+    public boolean shoot, jack, tuning, reset, r;
     public enum ShootingZone {
         NONE,
         CLOSE,
@@ -59,17 +61,20 @@ public class Drive extends OpMode {
         robot = new Hardware(hardwareMap);
 
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(robotPose == null ? new Pose(136, 8, Math.toRadians(180)) : robotPose);
+        follower.setStartingPose(robotPose == null ? /*new Pose(136, 8, Math.toRadians(180))*/ startPoseF : robotPose);
         follower.update();
 
         rumbling = new Timer();
         rumbling2 = new Timer();
+        rumbling3 = new Timer();
+        rumbling4 = new Timer();
         block = new Timer();
+        delay = new Timer();
 
-        if(goalX == 0) {
-            goalX = 12;
-            gamepad1.setLedColor(0, 0, 1, Gamepad.LED_DURATION_CONTINUOUS);
-        }
+        if(goalX == 0) goalX = 12;
+
+        if(goalX == 12) gamepad1.setLedColor(0, 0, 1, Gamepad.LED_DURATION_CONTINUOUS);
+        else gamepad1.setLedColor(1, 0, 0, Gamepad.LED_DURATION_CONTINUOUS);
 
         betterGamepad = new BetterGamepad(gamepad1);
     }
@@ -148,13 +153,21 @@ public class Drive extends OpMode {
             follower.holdPoint(new Pose(lastX, lastY, angle));
             if(follower.getPose().getX() >= lastX-errorX && follower.getPose().getX() <= lastX+errorX &&
                 follower.getPose().getY() >= lastY-errorY && follower.getPose().getY() <= lastY+errorY &&
-                follower.getPose().getHeading() >= angle-Math.toRadians(errorH) && follower.getPose().getHeading() <= angle+Math.toRadians(errorH) && !tuning) shoot(shootMult(distance)+shootError);
+                follower.getPose().getHeading() >= angle-Math.toRadians(errorH) && follower.getPose().getHeading() <= angle+Math.toRadians(errorH) && !tuning) {
+                if(r) {
+                    delay.resetTimer();
+                    r = false;
+                }
+                if(delay.getElapsedTime() >= delayT) shoot(shootMult(distance) + shootError);
+                else block.resetTimer();
+            }
             else {
                 for (DcMotorEx shooter : robot.shooters) shooter.setVelocity(0);
                 for (Servo blocker : robot.blockers) blocker.setPosition(blockerBlockedPos);
                 if(tuning) robot.collector.setVelocity(0);
                 else robot.collector.setVelocity(vMax);
                 block.resetTimer();
+                r = true;
             }
         } else {
             drive(gamepad1);
@@ -188,6 +201,15 @@ public class Drive extends OpMode {
                     reset = false;
                 }
             }
+            if (rumbling3.getElapsedTime() <= rumblingT)
+                gamepad1.rumble(Gamepad.RUMBLE_DURATION_CONTINUOUS);
+            else gamepad1.stopRumble();
+            rumbling4.resetTimer();
+        } else {
+            if (rumbling4.getElapsedTime() <= rumblingT)
+                gamepad1.rumble(Gamepad.RUMBLE_DURATION_CONTINUOUS);
+            else gamepad1.stopRumble();
+            rumbling3.resetTimer();
         }
 
         follower.update();
@@ -199,6 +221,12 @@ public class Drive extends OpMode {
         telemetry.addData("distance", distance + " IN");
         telemetry.addData("shoot multiplier", shootMult(distance)+shootError);
         telemetry.addData("zone", canShoot(follower.getPose()));
+        telemetry.addData("collector velocity", robot.collector.getVelocity());
+        telemetry.addData("tuning", tuning);
+        telemetry.addData("reset", reset);
+        telemetry.addData("block", block.getElapsedTime());
+        telemetry.addData("delay", delay.getElapsedTime());
+        telemetry.addData("blockT", blockT);
     }
 
     public void drive(Gamepad gamepad){
