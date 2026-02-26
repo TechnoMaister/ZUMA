@@ -46,7 +46,7 @@ public class BlueC extends OpMode {
     public Pose
     startPose, shootPose, collect1Pose, collect1CtrPose,
     collect2Pose, collect2CtrPose, collect3Pose,
-    collect3CtrPose, parkPose, collect1CtrPose2;
+    collect3CtrPose, parkPose;
     public Path scorePreload;
     public PathChain grab1, score1, grab2, score2, grab3, score3, park1, park2;
     public Hardware robot;
@@ -58,7 +58,6 @@ public class BlueC extends OpMode {
         shootPose = shootPoseC;
         collect1Pose = RobotConstants.collect1Pose;
         collect1CtrPose = collect1CtrPoseC;
-        collect1CtrPose2 = RobotConstants.collect1CtrPose2C;
         collect2Pose = RobotConstants.collect2Pose;
         collect2CtrPose = collect2CtrPoseC;
         collect3Pose = RobotConstants.collect3Pose;
@@ -102,7 +101,7 @@ public class BlueC extends OpMode {
                 .build();
 
         grab3 = follower.pathBuilder()
-                .addPath(new BezierCurve(shootPose, collect1CtrPose2, collect1Pose))
+                .addPath(new BezierCurve(shootPose, collect1CtrPose, collect1Pose))
                 .setConstantHeadingInterpolation(collect1Pose.getHeading())
                 .build();
 

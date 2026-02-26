@@ -254,7 +254,7 @@ public class Drive extends OpMode {
 
     public double angleError(double distance) {
         return MathFunctions.clamp(4.83415*1e-7 * Math.pow(distance, 4) - 0.000184899 * Math.pow(distance, 3) + 0.0251689*Math.pow(distance, 2) - 1.4605*distance + 40.69425, 6, 12);
-    }//3
+    }
 
     public double shootMult(double distance) {
         return MathFunctions.clamp(-3.28801*1e-7 * Math.pow(distance, 3) + 0.000115734*Math.pow(distance, 2) - 0.0123207*distance + 1.13939, .725, .79);
