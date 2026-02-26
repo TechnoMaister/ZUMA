@@ -63,7 +63,6 @@ public class RobotConstants {
     collect1Pose = new Pose(13, 35, Math.toRadians(0)),
     collect1CtrPoseF = new Pose(60, 40),
     collect1CtrPoseC = new Pose(63, 28),
-    collect1CtrPose2C = new Pose(0, 0),
     collect2Pose = new Pose(13, 57, Math.toRadians(0)),
     score2CtrPose = new Pose(48, 56),
     collect2CtrPoseF = new Pose(72, 72),
