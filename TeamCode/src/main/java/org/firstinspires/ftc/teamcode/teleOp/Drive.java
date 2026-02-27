@@ -1,8 +1,14 @@
 package org.firstinspires.ftc.teamcode.teleOp;
 
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.angleError;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.angleErrorC;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.angleErrorF;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.angleErrorBCL;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.angleErrorBCR;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.angleErrorBFL;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.angleErrorBFR;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.angleErrorRCL;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.angleErrorRCR;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.angleErrorRFL;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.angleErrorRFR;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockerBlockedPos;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.blockerOpenPos;
@@ -21,7 +27,6 @@ import static org.firstinspires.ftc.teamcode.util.RobotConstants.leftJackUpPos;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.rightJackDownPos;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.rightJackUpPos;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.robotPose;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.rumblingT;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootError;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootErrorC;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootErrorF;
@@ -47,31 +52,31 @@ public class Drive extends OpMode {
     public Hardware robot;
     public Follower follower;
     public BetterGamepad betterGamepad;
-    public Timer rumbling, rumbling2, rumbling3, rumbling4, block, delay;
+    public Timer block, delay;
     public double angle, lastX, lastY;
-    public boolean shoot, jack, tuning, reset, r;
+    public boolean shoot, jack, tuning, r;
     public enum ShootingZone {
         NONE,
         CLOSE,
         FAR
     }
 
+    Pose start;
+
     @Override
     public void init() {
         robot = new Hardware(hardwareMap);
 
+        start = new Pose(135.34, 7.955, Math.toRadians(180));
+
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(robotPose == null ? /*new Pose(136, 8, Math.toRadians(180))*/ startPoseF : robotPose);
+        follower.setStartingPose(/*robotPose == null ?  start : robotPose*/ startPoseF);
         follower.update();
 
-        rumbling = new Timer();
-        rumbling2 = new Timer();
-        rumbling3 = new Timer();
-        rumbling4 = new Timer();
         block = new Timer();
         delay = new Timer();
 
-        if(goalX == 0) goalX = 12;
+        if(goalX == 0) goalX = 12; // 132
 
         if(goalX == 12) gamepad1.setLedColor(0, 0, 1, Gamepad.LED_DURATION_CONTINUOUS);
         else gamepad1.setLedColor(1, 0, 0, Gamepad.LED_DURATION_CONTINUOUS);
@@ -90,7 +95,6 @@ public class Drive extends OpMode {
 
         if(betterGamepad.right_trigger.pressed) jack = !jack;
         if(betterGamepad.cross.pressed) tuning = !tuning;
-        if(betterGamepad.touchpad.pressed) reset = !reset;
 
         if(jack) {
             robot.leftJack.setPosition(leftJackUpPos);
@@ -100,40 +104,76 @@ public class Drive extends OpMode {
             robot.rightJack.setPosition(rightJackDownPos);
         }
 
-        if (tuning) {
-            if (rumbling.getElapsedTime() <= rumblingT)
-                gamepad1.rumble(Gamepad.RUMBLE_DURATION_CONTINUOUS);
-            else gamepad1.stopRumble();
-            rumbling2.resetTimer();
-        } else {
-            if (rumbling2.getElapsedTime() <= rumblingT)
-                gamepad1.rumble(Gamepad.RUMBLE_DURATION_CONTINUOUS);
-            else gamepad1.stopRumble();
-            rumbling.resetTimer();
+        if(canShoot(follower.getPose()) == ShootingZone.FAR) {
+            if (betterGamepad.dpad_up.pressed) shootErrorF += .02;
+            else if (betterGamepad.dpad_down.pressed) shootErrorF -= .02;
+            shootError = shootErrorF;
+        } else if(canShoot(follower.getPose()) == ShootingZone.CLOSE) {
+            if(betterGamepad.dpad_up.pressed) shootErrorC += .02;
+            else if(betterGamepad.dpad_down.pressed) shootErrorC -= .02;
+            shootError = shootErrorC;
         }
 
-        if(tuning && shoot){
+        if(goalX == 12) {
+
             if(canShoot(follower.getPose()) == ShootingZone.FAR) {
 
-                if (betterGamepad.dpad_right.pressed && angle <= (2 * Math.PI - Math.toRadians(2))) angleErrorF -= 2;
-                else if (betterGamepad.dpad_left.pressed && angle > Math.toRadians(2)) angleErrorF += 2;
-                angleError = angleErrorF;
-
-                if (betterGamepad.dpad_up.pressed && (shootMult(distance) + shootError) <= .98) shootErrorF += .02;
-                else if (betterGamepad.dpad_down.pressed && (shootMult(distance) + shootError) > .02) shootErrorF -= .02;
-                shootError = shootErrorF;
+                if(follower.getPose().getHeading() > 90) {
+                    if (betterGamepad.dpad_right.pressed && angle <= (2 * Math.PI - Math.toRadians(2))) angleErrorBFR -= 2;
+                    else if (betterGamepad.dpad_left.pressed && angle > Math.toRadians(2)) angleErrorBFR += 2;
+                    angleError = angleErrorBFR;
+                }
+                else {
+                    if (betterGamepad.dpad_right.pressed && angle <= (2 * Math.PI - Math.toRadians(2))) angleErrorBFL -= 2;
+                    else if (betterGamepad.dpad_left.pressed && angle > Math.toRadians(2)) angleErrorBFL += 2;
+                    angleError = angleErrorBFL;
+                }
 
             } else {
 
-                if(betterGamepad.dpad_right.pressed && angle <= (2 * Math.PI - Math.toRadians(2))) angleErrorC -= 2;
-                else if(betterGamepad.dpad_left.pressed && angle > Math.toRadians(2)) angleErrorC += 2;
-                angleError = angleErrorC;
+                if(follower.getPose().getHeading() > 90) {
+                    if (betterGamepad.dpad_right.pressed && angle <= (2 * Math.PI - Math.toRadians(2))) angleErrorBCR -= 2;
+                    else if (betterGamepad.dpad_left.pressed && angle > Math.toRadians(2)) angleErrorBCR += 2;
+                    angleError = angleErrorBCR;
+                }
+                else {
+                    if (betterGamepad.dpad_right.pressed && angle <= (2 * Math.PI - Math.toRadians(2))) angleErrorBCL -= 2;
+                    else if (betterGamepad.dpad_left.pressed && angle > Math.toRadians(2)) angleErrorBCL += 2;
+                    angleError = angleErrorBCL;
+                }
+            }
 
-                if(betterGamepad.dpad_up.pressed && (shootMult(distance) + shootError) <= .98) shootErrorC += .02;
-                else if(betterGamepad.dpad_down.pressed && (shootMult(distance) + shootError) > .02) shootErrorC -= .02;
-                shootError = shootErrorC;
+        } else {
+
+            if(canShoot(follower.getPose()) == ShootingZone.FAR) {
+
+                if(follower.getPose().getHeading() > 90) {
+                    if (betterGamepad.dpad_right.pressed && angle <= (2 * Math.PI - Math.toRadians(2))) angleErrorRFR += 2;
+                    else if (betterGamepad.dpad_left.pressed && angle > Math.toRadians(2)) angleErrorRFR -= 2;
+                    angleError = angleErrorRFR;
+                }
+                else {
+                    if (betterGamepad.dpad_right.pressed && angle <= (2 * Math.PI - Math.toRadians(2))) angleErrorRFL += 2;
+                    else if (betterGamepad.dpad_left.pressed && angle > Math.toRadians(2)) angleErrorRFL -= 2;
+                    angleError = angleErrorRFL;
+                }
+
+            } else {
+
+                if(follower.getPose().getHeading() > 90) {
+                    if (betterGamepad.dpad_right.pressed && angle <= (2 * Math.PI - Math.toRadians(2))) angleErrorRCR += 2;
+                    else if (betterGamepad.dpad_left.pressed && angle > Math.toRadians(2)) angleErrorRCR -= 2;
+                    angleError = angleErrorRCR;
+                }
+                else {
+                    if (betterGamepad.dpad_right.pressed && angle <= (2 * Math.PI - Math.toRadians(2))) angleErrorRCL += 2;
+                    else if (betterGamepad.dpad_left.pressed && angle > Math.toRadians(2)) angleErrorRCL -= 2;
+                    angleError = angleErrorRCL;
+                }
             }
         }
+
+
 
         dx = goalX - follower.getPose().getX(); dy = goalY - follower.getPose().getY();
         distance = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
@@ -181,36 +221,9 @@ public class Drive extends OpMode {
             block.resetTimer();
         }
 
-        if(reset){
-            if (goalX == 132) {
-                if (betterGamepad.triangle.pressed) {
-                    follower.setPose(new Pose(8.66, 7.955, Math.toRadians(0)));
-                    reset = false;
-                }
-                else if (betterGamepad.circle.pressed) {
-                    follower.setPose(new Pose(follower.getPose().getX(), follower.getPose().getY(), Math.toRadians(0)));
-                    reset = false;
-                }
-            } else {
-                if (betterGamepad.triangle.pressed) {
-                    follower.setPose(new Pose(135.34, 7.955, Math.toRadians(180)));
-                    reset = false;
-                }
-                else if (betterGamepad.circle.pressed) {
-                    follower.setPose(new Pose(follower.getPose().getX(), follower.getPose().getY(), Math.toRadians(180)));
-                    reset = false;
-                }
-            }
-            if (rumbling3.getElapsedTime() <= rumblingT)
-                gamepad1.rumble(Gamepad.RUMBLE_DURATION_CONTINUOUS);
-            else gamepad1.stopRumble();
-            rumbling4.resetTimer();
-        } else {
-            if (rumbling4.getElapsedTime() <= rumblingT)
-                gamepad1.rumble(Gamepad.RUMBLE_DURATION_CONTINUOUS);
-            else gamepad1.stopRumble();
-            rumbling3.resetTimer();
-        }
+        if (betterGamepad.circle.pressed)
+            if (goalX == 12) follower.setPose(start);
+            else follower.setPose(start.mirror());
 
         follower.update();
 
@@ -223,22 +236,31 @@ public class Drive extends OpMode {
         telemetry.addData("zone", canShoot(follower.getPose()));
         telemetry.addData("collector velocity", robot.collector.getVelocity());
         telemetry.addData("tuning", tuning);
-        telemetry.addData("reset", reset);
         telemetry.addData("block", block.getElapsedTime());
         telemetry.addData("delay", delay.getElapsedTime());
         telemetry.addData("blockT", blockT);
+        telemetry.addData("angle error close left RED", angleErrorRCL);
+        telemetry.addData("angle error close left BLUE", angleErrorBCL);
+        telemetry.addData("angle error close right RED", angleErrorRCR);
+        telemetry.addData("angle error close right BLUE", angleErrorBCR);
+        telemetry.addData("angle error far left RED", angleErrorRFL);
+        telemetry.addData("angle error far left BLUE", angleErrorBFL);
+        telemetry.addData("angle error far right RED", angleErrorRFR);
+        telemetry.addData("angle error far right BLUE", angleErrorBFR);
+        telemetry.addData("shoot error close", shootErrorC);
+        telemetry.addData("shoot error far", shootErrorF);
     }
 
     public void drive(Gamepad gamepad){
-        if(goalX == 132) follower.setTeleOpDrive(
+        if(goalX == 12) follower.setTeleOpDrive(
+                    gamepad.left_stick_y,
+                    gamepad.left_stick_x,
+                    -gamepad.right_stick_x,
+                    false
+            );
+        else follower.setTeleOpDrive(
                 -gamepad.left_stick_y,
                 -gamepad.left_stick_x,
-                -gamepad.right_stick_x,
-                false
-        );
-        else follower.setTeleOpDrive(
-                gamepad.left_stick_y,
-                gamepad.left_stick_x,
                 -gamepad.right_stick_x,
                 false
         );

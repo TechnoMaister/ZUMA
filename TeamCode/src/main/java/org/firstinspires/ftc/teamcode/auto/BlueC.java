@@ -11,11 +11,12 @@ import static org.firstinspires.ftc.teamcode.util.RobotConstants.dx;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.dy;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.goalX;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.goalY;
-import static org.firstinspires.ftc.teamcode.util.RobotConstants.parkPose1;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.parkPoseAhuieala;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.robotPose;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootC;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootDelay;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootPoseC;
+import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootPoseCahuit;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootT1;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.shootT2;
 import static org.firstinspires.ftc.teamcode.util.RobotConstants.startPoseC;
@@ -46,7 +47,7 @@ public class BlueC extends OpMode {
     public Pose
     startPose, shootPose, collect1Pose, collect1CtrPose,
     collect2Pose, collect2CtrPose, collect3Pose,
-    collect3CtrPose, parkPose;
+    collect3CtrPose, parkPose, shootPoseAhuit;
     public Path scorePreload;
     public PathChain grab1, score1, grab2, score2, grab3, score3, park1, park2;
     public Hardware robot;
@@ -56,16 +57,17 @@ public class BlueC extends OpMode {
     public void init() {
         startPose = startPoseC;
         shootPose = shootPoseC;
-        collect1Pose = RobotConstants.collect1Pose;
+        collect1Pose = RobotConstants.collect1PoseC;
         collect1CtrPose = collect1CtrPoseC;
-        collect2Pose = RobotConstants.collect2Pose;
+        collect2Pose = RobotConstants.collect2PoseC;
         collect2CtrPose = collect2CtrPoseC;
-        collect3Pose = RobotConstants.collect3Pose;
+        collect3Pose = RobotConstants.collect3PoseC;
         collect3CtrPose = collect3CtrPoseC;
-        parkPose = parkPose1;
+        parkPose = parkPoseAhuieala;
+        shootPoseAhuit = shootPoseCahuit;
 
-        goalX = 12;
-        gamepad1.setLedColor(0, 0, 1, Gamepad.LED_DURATION_CONTINUOUS);
+        goalX = 132;
+        gamepad1.setLedColor(1, 0, 0, Gamepad.LED_DURATION_CONTINUOUS);
 
         pathTimer = new Timer();
         actionTimer = new Timer();
@@ -77,12 +79,12 @@ public class BlueC extends OpMode {
     }
 
     public void buildPaths() {
-        scorePreload = new Path(new BezierLine(startPose, shootPose));
-        scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), shootPose.getHeading());
+        scorePreload = new Path(new BezierLine(startPose, shootPoseAhuit));
+        scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), shootPoseAhuit.getHeading());
 
         grab1 = follower.pathBuilder()
-                .addPath(new BezierCurve(shootPose, collect3CtrPose, collect3Pose))
-                .setConstantHeadingInterpolation(Math.toRadians(0))
+                .addPath(new BezierCurve(shootPoseAhuit, collect3CtrPose, collect3Pose))
+                .setConstantHeadingInterpolation(collect3Pose.getHeading())
                 .build();
 
         score1 = follower.pathBuilder()
