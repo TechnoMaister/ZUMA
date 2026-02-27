@@ -225,7 +225,7 @@ public class Drive extends OpMode {
             if (goalX == 12) follower.setPose(start);
             else follower.setPose(start.mirror());
 
-        follower.update();//da
+        follower.update();//dap
 
         telemetry.addData("robot X", follower.getPose().getX());
         telemetry.addData("robot Y", follower.getPose().getY());
