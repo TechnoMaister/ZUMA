@@ -20,6 +20,7 @@ public class RobotConstants {
                         collectT = 225,
                         shootDelay = 250,
                         shootT1 = 450,
+                        reverseT = 1400,
                         shootT2 = 1300,
                         errorX = 2,
                         errorY = 2,
@@ -33,7 +34,7 @@ public class RobotConstants {
                         dy,
                         angleErrorBFR,
                         angleErrorRFR,
-                        angleErrorRFL = -12,
+                        angleErrorRFL = -6,
                         angleErrorBFL = -8,
                         angleErrorRCR = -4,
 
@@ -41,7 +42,7 @@ public class RobotConstants {
                         angleErrorRCL = -16,
                         angleErrorBCL = -4,
                         angleError,
-                        shootErrorF,
+                        shootErrorF = -.04,
                         shootErrorC = 0.02,
                         shootError,
                         limelightOffsetX = -12,
@@ -66,7 +67,7 @@ public class RobotConstants {
 
         startPoseF = new Pose(56, 8.66, Math.toRadians(90)),
                         startPoseC = new Pose(18.167, 119.267, Math.toRadians(144)),
-                        shootPoseF = new Pose(56, 11, Math.toRadians(111)),
+                        shootPoseF = new Pose(56, 11, Math.toRadians(112.5)),
                         shootPoseCahuit = new Pose(47.69, 85.14159674169, Math.toRadians(130)),
                         shootPoseC = new Pose(50, 88, Math.toRadians(130)),
                         collect1Pose = new Pose(13, 35, Math.toRadians(0)),
@@ -84,6 +85,6 @@ public class RobotConstants {
                         collect3CtrPoseC = new Pose(37.3, 76.967),
                         parkPose1 = new Pose(25, 70, Math.toRadians(0)),
                         parkPoseAhuieala = new Pose(20, 70, Math.toRadians(0)),
-                        parkPose2 = new Pose(56, 27, Math.toRadians(180)),
+                        parkPose2 = new Pose(110, 7.955, Math.toRadians(180)),
                         robotPose;
 }

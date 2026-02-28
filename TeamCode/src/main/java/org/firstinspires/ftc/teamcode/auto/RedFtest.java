@@ -41,8 +41,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.util.Hardware;
 import org.firstinspires.ftc.teamcode.util.RobotConstants;
 
-@Autonomous(name = "RedF", group = "Red")
-public class RedF extends OpMode {
+@Autonomous(name = "RedFtest", group = "Red")
+public class RedFtest extends OpMode {
 
     public Follower follower;
     public Timer pathTimer, actionTimer, opmodeTimer, starlight;
@@ -134,7 +134,7 @@ public class RedF extends OpMode {
                 setPathState(1);
                 break;
             case 1:
-                if (!follower.isBusy() && starlight.getElapsedTime() >= 20000) {
+                if (!follower.isBusy()) {
                     if(actionTimer.getElapsedTime() >= shootDelay)
                         if (actionTimer.getElapsedTime() <= shootT1) shoot(shootF-.02);
                         else if(actionTimer.getElapsedTime() <= shootT2) {
@@ -144,8 +144,8 @@ public class RedF extends OpMode {
                             stopShoot();
                             block();
                             stopCollect();
-                            follower.followPath(park2, true);
-                            setPathState(8);
+                            follower.followPath(grab1, true);
+                            setPathState(2);
                         }
                 } else actionTimer.resetTimer();
 
@@ -162,7 +162,7 @@ public class RedF extends OpMode {
             case 3:
                 if (!follower.isBusy()) {
                     if(actionTimer.getElapsedTime() >= shootDelay)
-                        if (actionTimer.getElapsedTime() <= shootT1) shoot(shootF);
+                        if (actionTimer.getElapsedTime() <= shootT1) shoot(shootF-0.2);
                         else if(actionTimer.getElapsedTime() <= shootT2) {
                             collect();
                             open();
@@ -186,7 +186,7 @@ public class RedF extends OpMode {
             case 5:
                 if (!follower.isBusy()) {
                     if(actionTimer.getElapsedTime() >= shootDelay)
-                        if (actionTimer.getElapsedTime() <= shootT1) shoot(shootF);
+                        if (actionTimer.getElapsedTime() <= shootT1) shoot(shootF-0.2);
                         else if(actionTimer.getElapsedTime() <= shootT2) {
                             collect();
                             open();
@@ -210,7 +210,7 @@ public class RedF extends OpMode {
             case 7:
                 if (!follower.isBusy()) {
                     if(actionTimer.getElapsedTime() >= shootDelay)
-                        if (actionTimer.getElapsedTime() <= shootT1) shoot(shootF);
+                        if (actionTimer.getElapsedTime() <= shootT1) shoot(shootF-0.2);
                         else if(actionTimer.getElapsedTime() <= shootT2) {
                             collect();
                             open();

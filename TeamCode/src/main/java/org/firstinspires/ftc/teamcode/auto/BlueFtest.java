@@ -41,8 +41,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.util.Hardware;
 import org.firstinspires.ftc.teamcode.util.RobotConstants;
 
-@Autonomous(name = "RedF", group = "Red")
-public class RedF extends OpMode {
+@Autonomous(name = "RedFtest", group = "Red")
+public class BlueFtest extends OpMode {
 
     public Follower follower;
     public Timer pathTimer, actionTimer, opmodeTimer, starlight;
@@ -57,16 +57,16 @@ public class RedF extends OpMode {
 
     @Override
     public void init() {
-        startPose = startPoseF.mirror();
-        shootPose1 = shootPoseF.mirror();
-        shootPose2 = shootPoseC.mirror();
-        collect1Pose = RobotConstants.collect1Pose.mirror();
-        collect1CtrPose = collect1CtrPoseF.mirror();
-        collect2Pose = RobotConstants.collect2Pose.mirror();
-        collect2CtrPose = collect2CtrPoseF.mirror();
-        score2CtrPose = RobotConstants.score2CtrPose.mirror();
-        collect3Pose = RobotConstants.collect3Pose.mirror();
-        collect3CtrPose = collect3CtrPoseF.mirror();
+        startPose = startPoseF;
+        shootPose1 = shootPoseF;
+        shootPose2 = shootPoseC;
+        collect1Pose = RobotConstants.collect1Pose;
+        collect1CtrPose = collect1CtrPoseF;
+        collect2Pose = RobotConstants.collect2Pose;
+        collect2CtrPose = collect2CtrPoseF;
+        score2CtrPose = RobotConstants.score2CtrPose;
+        collect3Pose = RobotConstants.collect3Pose;
+        collect3CtrPose = collect3CtrPoseF;
         parkPose = parkPose2;
 
         goalX = 132;
@@ -134,7 +134,7 @@ public class RedF extends OpMode {
                 setPathState(1);
                 break;
             case 1:
-                if (!follower.isBusy() && starlight.getElapsedTime() >= 20000) {
+                if (!follower.isBusy()) {
                     if(actionTimer.getElapsedTime() >= shootDelay)
                         if (actionTimer.getElapsedTime() <= shootT1) shoot(shootF-.02);
                         else if(actionTimer.getElapsedTime() <= shootT2) {
@@ -144,8 +144,8 @@ public class RedF extends OpMode {
                             stopShoot();
                             block();
                             stopCollect();
-                            follower.followPath(park2, true);
-                            setPathState(8);
+                            follower.followPath(grab1, true);
+                            setPathState(2);
                         }
                 } else actionTimer.resetTimer();
 
@@ -162,7 +162,7 @@ public class RedF extends OpMode {
             case 3:
                 if (!follower.isBusy()) {
                     if(actionTimer.getElapsedTime() >= shootDelay)
-                        if (actionTimer.getElapsedTime() <= shootT1) shoot(shootF);
+                        if (actionTimer.getElapsedTime() <= shootT1) shoot(shootF-0.2);
                         else if(actionTimer.getElapsedTime() <= shootT2) {
                             collect();
                             open();
@@ -186,7 +186,7 @@ public class RedF extends OpMode {
             case 5:
                 if (!follower.isBusy()) {
                     if(actionTimer.getElapsedTime() >= shootDelay)
-                        if (actionTimer.getElapsedTime() <= shootT1) shoot(shootF);
+                        if (actionTimer.getElapsedTime() <= shootT1) shoot(shootF-0.2);
                         else if(actionTimer.getElapsedTime() <= shootT2) {
                             collect();
                             open();
@@ -210,7 +210,7 @@ public class RedF extends OpMode {
             case 7:
                 if (!follower.isBusy()) {
                     if(actionTimer.getElapsedTime() >= shootDelay)
-                        if (actionTimer.getElapsedTime() <= shootT1) shoot(shootF);
+                        if (actionTimer.getElapsedTime() <= shootT1) shoot(shootF-0.2);
                         else if(actionTimer.getElapsedTime() <= shootT2) {
                             collect();
                             open();

@@ -77,7 +77,7 @@ public class Drive extends OpMode {
         start = new Pose(135.34, 7.955, Math.toRadians(180));
 
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(/* robotPose == null ? start : robotPose */ startPoseF);
+        follower.setStartingPose(robotPose == null ? start : robotPose);
         follower.update();
 
         block = new Timer();
@@ -295,7 +295,7 @@ public class Drive extends OpMode {
                 while (headingError < -Math.PI)
                     headingError += 2 * Math.PI;
 
-                double turnPower = com.pedropathing.math.MathFunctions.clamp(headingError * 0.8, -0.45, 0.45);
+                double turnPower = MathFunctions.clamp(headingError * 0.8, -0.45, 0.45);
 
                 if (goalX == 12) {
                     follower.setTeleOpDrive(
